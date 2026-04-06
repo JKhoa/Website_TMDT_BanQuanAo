@@ -2,8 +2,6 @@
   # Fashion Ecommerce Website
   
   https://jkhoa.github.io/Website_TMDT_BanQuanAo/
-  
-  This is a code bundle for Fashion Ecommerce Website. The original project is available at https://www.figma.com/design/h1CchB0gLmT10nQS0vkXq2/Fashion-Ecommerce-Website.
 
   ## Running the code
 
