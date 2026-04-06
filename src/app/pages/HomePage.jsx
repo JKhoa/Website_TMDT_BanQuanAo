@@ -3,32 +3,45 @@ import { ChevronRight, Clock } from "lucide-react";
 import { ProductCard } from "../components/ProductCard";
 import { products, categories } from "../data/products";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
+
+// Get flash sale end time from localStorage or set new one
+function getFlashSaleEndTime() {
+  const saved = localStorage.getItem("flashSaleEndTime");
+  if (saved) {
+    const end = new Date(saved);
+    if (end > new Date()) return end;
+  }
+  // Set new end time: 24 hours from now
+  const endTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  localStorage.setItem("flashSaleEndTime", endTime.toISOString());
+  return endTime;
+}
 
 export function HomePage() {
-  const [flashSaleTime, setFlashSaleTime] = useState({
-    hours: 23,
-    minutes: 59,
-    seconds: 59
-  });
+  const [flashSaleTime, setFlashSaleTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [newsletterEmail, setNewsletterEmail] = useState("");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setFlashSaleTime((prev) => {
-        let { hours, minutes, seconds } = prev;
-        seconds--;
-        if (seconds < 0) {
-          seconds = 59;
-          minutes--;
-          if (minutes < 0) {
-            minutes = 59;
-            hours--;
-            if (hours < 0) hours = 23;
-          }
-        }
-        return { hours, minutes, seconds };
-      });
-    }, 1000);
+    const endTime = getFlashSaleEndTime();
 
+    const updateTimer = () => {
+      const now = new Date();
+      const diff = endTime - now;
+      if (diff <= 0) {
+        // Reset timer
+        localStorage.removeItem("flashSaleEndTime");
+        setFlashSaleTime({ hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      setFlashSaleTime({ hours, minutes, seconds });
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -36,13 +49,21 @@ export function HomePage() {
   const newArrivals = products.filter((p) => p.isNewArrival).slice(0, 8);
   const flashSaleProducts = products.filter((p) => p.isFlashSale).slice(0, 4);
 
+  const handleNewsletter = (e) => {
+    e.preventDefault();
+    if (newsletterEmail) {
+      toast.success("Đăng ký nhận tin thành công!");
+      setNewsletterEmail("");
+    }
+  };
+
   return (
     <div>
       {/* Hero Banner */}
       <section className="relative h-[600px] bg-gradient-to-r from-orange-500 to-pink-500">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1761470744784-3e1ab858ab5d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwYmFubmVyJTIwbW9kZXJufGVufDF8fHx8MTc3Mjg3MjU2NHww&ixlib=rb-4.1.0&q=80&w=1080"
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200"
             alt="Hero Banner"
             className="w-full h-full object-cover opacity-90"
           />
@@ -78,15 +99,15 @@ export function HomePage() {
               <div className="flex items-center gap-4 text-white">
                 <Clock className="w-6 h-6" />
                 <div className="flex gap-2">
-                  <div className="bg-white text-red-500 px-4 py-2 rounded-lg font-bold">
+                  <div className="bg-white text-red-500 px-4 py-2 rounded-lg font-bold min-w-[52px] text-center">
                     {String(flashSaleTime.hours).padStart(2, "0")}
                   </div>
                   <span className="text-2xl">:</span>
-                  <div className="bg-white text-red-500 px-4 py-2 rounded-lg font-bold">
+                  <div className="bg-white text-red-500 px-4 py-2 rounded-lg font-bold min-w-[52px] text-center">
                     {String(flashSaleTime.minutes).padStart(2, "0")}
                   </div>
                   <span className="text-2xl">:</span>
-                  <div className="bg-white text-red-500 px-4 py-2 rounded-lg font-bold">
+                  <div className="bg-white text-red-500 px-4 py-2 rounded-lg font-bold min-w-[52px] text-center">
                     {String(flashSaleTime.seconds).padStart(2, "0")}
                   </div>
                 </div>
@@ -118,6 +139,7 @@ export function HomePage() {
                 <img
                   src={category.image}
                   alt={category.name}
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
@@ -140,12 +162,8 @@ export function HomePage() {
               <h2 className="text-3xl font-bold mb-2">Sản Phẩm Bán Chạy</h2>
               <p className="text-gray-600">Những sản phẩm được yêu thích nhất</p>
             </div>
-            <Link
-              to="/products?bestseller=true"
-              className="text-orange-500 hover:text-orange-600 flex items-center gap-2"
-            >
-              Xem tất cả
-              <ChevronRight className="w-5 h-5" />
+            <Link to="/products?sort=bestseller" className="text-orange-500 hover:text-orange-600 flex items-center gap-2">
+              Xem tất cả <ChevronRight className="w-5 h-5" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -164,12 +182,8 @@ export function HomePage() {
               <h2 className="text-3xl font-bold mb-2">Hàng Mới Về</h2>
               <p className="text-gray-600">Cập nhật xu hướng thời trang mới nhất</p>
             </div>
-            <Link
-              to="/products?newarrival=true"
-              className="text-orange-500 hover:text-orange-600 flex items-center gap-2"
-            >
-              Xem tất cả
-              <ChevronRight className="w-5 h-5" />
+            <Link to="/products?sort=newest" className="text-orange-500 hover:text-orange-600 flex items-center gap-2">
+              Xem tất cả <ChevronRight className="w-5 h-5" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -188,45 +202,21 @@ export function HomePage() {
             <p className="text-gray-300">Cảm hứng phối đồ cho mọi phong cách</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="relative aspect-[3/4] rounded-lg overflow-hidden group">
-              <img
-                src="https://images.unsplash.com/photo-1590884226650-3611f205c13e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbG9va2Jvb2slMjBsaWZlc3R5bGV8ZW58MXx8fHwxNzcyODcyNTY0fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Lookbook 1"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black/30 flex items-end p-6">
-                <div>
-                  <h3 className="text-xl font-bold mb-1">Street Style</h3>
-                  <p className="text-sm opacity-90">Phong cách đường phố năng động</p>
+            {[
+              { title: "Street Style", desc: "Phong cách đường phố năng động", img: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600" },
+              { title: "Elegant", desc: "Thanh lịch và sang trọng", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600" },
+              { title: "Office", desc: "Chuyên nghiệp công sở", img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600" }
+            ].map((item) => (
+              <Link to="/lookbook" key={item.title} className="relative aspect-[3/4] rounded-lg overflow-hidden group">
+                <img src={item.img} alt={item.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-black/30 flex items-end p-6">
+                  <div>
+                    <h3 className="text-xl font-bold mb-1">{item.title}</h3>
+                    <p className="text-sm opacity-90">{item.desc}</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="relative aspect-[3/4] rounded-lg overflow-hidden group">
-              <img
-                src="https://images.unsplash.com/photo-1747707500073-65dd5c1407b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBmZW1hbGUlMjBkcmVzc3xlbnwxfHx8fDE3NzI4NzI1NjF8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Lookbook 2"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black/30 flex items-end p-6">
-                <div>
-                  <h3 className="text-xl font-bold mb-1">Elegant</h3>
-                  <p className="text-sm opacity-90">Thanh lịch và sang trọng</p>
-                </div>
-              </div>
-            </div>
-            <div className="relative aspect-[3/4] rounded-lg overflow-hidden group">
-              <img
-                src="https://images.unsplash.com/photo-1618008797651-3eb256213400?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBtYWxlJTIwc2hpcnR8ZW58MXx8fHwxNzcyODcyNTYwfDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Lookbook 3"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black/30 flex items-end p-6">
-                <div>
-                  <h3 className="text-xl font-bold mb-1">Office</h3>
-                  <p className="text-sm opacity-90">Chuyên nghiệp công sở</p>
-                </div>
-              </div>
-            </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -238,16 +228,19 @@ export function HomePage() {
           <p className="text-gray-600 mb-8">
             Nhận thông tin về sản phẩm mới, khuyến mãi và xu hướng thời trang mới nhất
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Email của bạn"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
               className="flex-1 px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              required
             />
-            <button className="px-8 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors">
+            <button type="submit" className="px-8 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors">
               Đăng ký
             </button>
-          </div>
+          </form>
         </div>
       </section>
     </div>

@@ -1,361 +1,308 @@
-import { useState, useMemo } from "react";
-import { useSearchParams } from "react-router";
-import { Filter, X, ChevronDown } from "lucide-react";
-import { ProductCard } from "../components/ProductCard";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { useSearchParams, Link } from "react-router";
+import { SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { products, categories } from "../data/products";
+import { ProductCard } from "../components/ProductCard";
+
+const ITEMS_PER_PAGE = 12;
 
 export function ProductListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
-  
-  // Filter states
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
-  const [selectedSubcategory, setSelectedSubcategory] = useState(searchParams.get("subcategory") || "");
-  const [priceRange, setPriceRange] = useState([0, 2000000]);
-  const [selectedSizes, setSelectedSizes] = useState([]);
-  const [selectedColors, setSelectedColors] = useState([]);
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  const [minRating, setMinRating] = useState(0);
-  const [sortBy, setSortBy] = useState("newest");
 
-  // Get unique values for filters
-  const allSizes = useMemo(() => {
-    const sizes = new Set();
-    products.forEach((p) => p.sizes.forEach((s) => sizes.add(s)));
-    return Array.from(sizes);
-  }, []);
+  // Read state from URL params
+  const selectedCategory = searchParams.get("category") || "";
+  const selectedSubcategory = searchParams.get("subcategory") || "";
+  const sortBy = searchParams.get("sort") || "newest";
+  const currentPage = parseInt(searchParams.get("page") || "1");
+  const saleOnly = searchParams.get("sale") === "true";
 
-  const allColors = useMemo(() => {
-    const colors = new Set();
-    products.forEach((p) => p.colors.forEach((c) => colors.add(c)));
-    return Array.from(colors);
-  }, []);
+  // Price range from URL
+  const minPrice = parseInt(searchParams.get("minPrice") || "0");
+  const maxPrice = parseInt(searchParams.get("maxPrice") || "10000000");
 
-  const allBrands = useMemo(() => {
-    const brands = new Set();
-    products.forEach((p) => brands.add(p.brand));
-    return Array.from(brands);
-  }, []);
+  const updateParam = useCallback((key, value) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      if (!value || value === "0" || (key === "maxPrice" && value === "10000000")) {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, value);
+      }
+      // Reset page when changing filters
+      if (key !== "page") {
+        newParams.delete("page");
+      }
+      return newParams;
+    });
+  }, [setSearchParams]);
 
-  // Filter and sort products
   const filteredProducts = useMemo(() => {
-    let filtered = [...products];
+    let result = [...products];
 
     // Category filter
     if (selectedCategory) {
-      filtered = filtered.filter((p) => p.category === selectedCategory);
+      result = result.filter((p) => p.category === selectedCategory);
     }
 
     // Subcategory filter
     if (selectedSubcategory) {
-      filtered = filtered.filter((p) => p.subcategory === selectedSubcategory);
+      result = result.filter((p) => p.subcategory === selectedSubcategory);
+    }
+
+    // Sale filter
+    if (saleOnly) {
+      result = result.filter((p) => p.salePrice);
     }
 
     // Price filter
-    filtered = filtered.filter((p) => {
+    result = result.filter((p) => {
       const price = p.salePrice || p.price;
-      return price >= priceRange[0] && price <= priceRange[1];
+      return price >= minPrice && price <= maxPrice;
     });
-
-    // Size filter
-    if (selectedSizes.length > 0) {
-      filtered = filtered.filter((p) =>
-        p.sizes.some((s) => selectedSizes.includes(s))
-      );
-    }
-
-    // Color filter
-    if (selectedColors.length > 0) {
-      filtered = filtered.filter((p) =>
-        p.colors.some((c) => selectedColors.includes(c))
-      );
-    }
-
-    // Brand filter
-    if (selectedBrands.length > 0) {
-      filtered = filtered.filter((p) => selectedBrands.includes(p.brand));
-    }
-
-    // Rating filter
-    if (minRating > 0) {
-      filtered = filtered.filter((p) => p.rating >= minRating);
-    }
 
     // Sort
     switch (sortBy) {
       case "price-asc":
-        filtered.sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price));
+        result.sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price));
         break;
       case "price-desc":
-        filtered.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
-        break;
-      case "bestseller":
-        filtered.sort((a, b) => b.reviews - a.reviews);
+        result.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
         break;
       case "rating":
-        filtered.sort((a, b) => b.rating - a.rating);
+        result.sort((a, b) => b.rating - a.rating);
         break;
-      default: // newest
-        filtered.reverse();
+      case "bestseller":
+        result.sort((a, b) => (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0));
+        break;
+      case "newest":
+      default:
+        result.sort((a, b) => b.id - a.id);
+        break;
     }
 
-    return filtered;
-  }, [
-    selectedCategory,
-    selectedSubcategory,
-    priceRange,
-    selectedSizes,
-    selectedColors,
-    selectedBrands,
-    minRating,
-    sortBy
-  ]);
+    return result;
+  }, [selectedCategory, selectedSubcategory, sortBy, saleOnly, minPrice, maxPrice]);
 
-  const toggleSize = (size) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );
-  };
-
-  const toggleColor = (color) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    );
-  };
-
-  const toggleBrand = (brand) => {
-    setSelectedBrands((prev) =>
-      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
-    );
-  };
-
-  const clearFilters = () => {
-    setSelectedCategory("");
-    setSelectedSubcategory("");
-    setPriceRange([0, 2000000]);
-    setSelectedSizes([]);
-    setSelectedColors([]);
-    setSelectedBrands([]);
-    setMinRating(0);
-  };
+  // Pagination
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const currentCategory = categories.find((c) => c.id === selectedCategory);
+  const categoryName = { nam: "Nam", nu: "Nữ", "tre-em": "Trẻ em", "phu-kien": "Phụ kiện" };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">
-          {currentCategory ? currentCategory.name : "Tất cả sản phẩm"}
-        </h1>
-        <p className="text-gray-600">
-          Tìm thấy {filteredProducts.length} sản phẩm
-        </p>
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+        <Link to="/" className="hover:text-orange-500">Trang chủ</Link>
+        <span>/</span>
+        <span className="text-gray-900">
+          {selectedCategory ? categoryName[selectedCategory] || "Sản phẩm" : "Tất cả sản phẩm"}
+          {saleOnly && " - Giảm giá"}
+        </span>
       </div>
 
-      <div className="flex gap-8">
-        {/* Filters Sidebar */}
-        <aside
-          className={`${
-            showFilters ? "fixed inset-0 z-50 bg-white" : "hidden"
-          } lg:block lg:w-64 lg:sticky lg:top-24 lg:h-fit overflow-y-auto`}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">
+            {saleOnly ? "🔥 Sản Phẩm Giảm Giá" : selectedCategory ? categoryName[selectedCategory] : "Tất Cả Sản Phẩm"}
+          </h1>
+          <p className="text-gray-600 mt-1">{filteredProducts.length} sản phẩm</p>
+        </div>
+        <button
+          className="lg:hidden flex items-center gap-2 px-4 py-2 border rounded-lg"
+          onClick={() => setShowFilters(!showFilters)}
         >
-          <div className="lg:hidden flex items-center justify-between p-4 border-b">
-            <h2 className="text-xl font-bold">Bộ lọc</h2>
-            <button onClick={() => setShowFilters(false)}>
-              <X className="w-6 h-6" />
-            </button>
-          </div>
+          <SlidersHorizontal className="w-5 h-5" />
+          Bộ lọc
+        </button>
+      </div>
 
-          <div className="p-4 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Filters */}
+        <div className={`lg:block ${showFilters ? "block" : "hidden"}`}>
+          <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+            <div className="flex justify-between items-center mb-6 lg:hidden">
+              <h2 className="text-lg font-bold">Bộ lọc</h2>
+              <button onClick={() => setShowFilters(false)}>
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
             {/* Category Filter */}
-            <div>
+            <div className="mb-6">
               <h3 className="font-semibold mb-3">Danh mục</h3>
               <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    updateParam("category", "");
+                    updateParam("subcategory", "");
+                  }}
+                  className={`block w-full text-left px-3 py-2 rounded text-sm transition-colors ${
+                    !selectedCategory ? "bg-orange-500 text-white" : "hover:bg-orange-50"
+                  }`}
+                >
+                  Tất cả
+                </button>
                 {categories.map((cat) => (
-                  <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={selectedCategory === cat.id}
-                      onChange={() => {
-                        setSelectedCategory(cat.id);
-                        setSelectedSubcategory("");
+                  <div key={cat.id}>
+                    <button
+                      onClick={() => {
+                        updateParam("category", cat.id);
+                        updateParam("subcategory", "");
                       }}
-                      className="w-4 h-4 text-orange-500"
-                    />
-                    <span>{cat.name}</span>
-                  </label>
+                      className={`block w-full text-left px-3 py-2 rounded text-sm transition-colors ${
+                        selectedCategory === cat.id ? "bg-orange-500 text-white" : "hover:bg-orange-50"
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                    {selectedCategory === cat.id && (
+                      <div className="ml-4 mt-1 space-y-1">
+                        {cat.subcategories.map((sub) => (
+                          <button
+                            key={sub.id}
+                            onClick={() => updateParam("subcategory", sub.id)}
+                            className={`block w-full text-left px-3 py-1 rounded text-sm transition-colors ${
+                              selectedSubcategory === sub.id ? "text-orange-500 font-semibold" : "text-gray-600 hover:text-orange-500"
+                            }`}
+                          >
+                            {sub.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Subcategory Filter */}
-            {currentCategory && (
-              <div>
-                <h3 className="font-semibold mb-3">Danh mục con</h3>
-                <div className="space-y-2">
-                  {currentCategory.subcategories.map((sub) => (
-                    <label key={sub.id} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="subcategory"
-                        checked={selectedSubcategory === sub.id}
-                        onChange={() => setSelectedSubcategory(sub.id)}
-                        className="w-4 h-4 text-orange-500"
-                      />
-                      <span>{sub.name}</span>
-                    </label>
-                  ))}
-                </div>
+            {/* Price Filter */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3">Mức giá</h3>
+              <div className="space-y-2">
+                {[
+                  { label: "Dưới 200.000đ", min: 0, max: 200000 },
+                  { label: "200.000đ - 500.000đ", min: 200000, max: 500000 },
+                  { label: "500.000đ - 1.000.000đ", min: 500000, max: 1000000 },
+                  { label: "Trên 1.000.000đ", min: 1000000, max: 10000000 }
+                ].map((range) => (
+                  <button
+                    key={range.label}
+                    onClick={() => {
+                      updateParam("minPrice", String(range.min));
+                      updateParam("maxPrice", String(range.max));
+                    }}
+                    className={`block w-full text-left px-3 py-2 rounded text-sm transition-colors ${
+                      minPrice === range.min && maxPrice === range.max
+                        ? "bg-orange-500 text-white"
+                        : "hover:bg-orange-50"
+                    }`}
+                  >
+                    {range.label}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
 
-            {/* Price Range */}
-            <div>
-              <h3 className="font-semibold mb-3">Khoảng giá</h3>
-              <div className="space-y-3">
+            {/* Sale filter */}
+            <div className="mb-6">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
-                  type="range"
-                  min="0"
-                  max="2000000"
-                  step="100000"
-                  value={priceRange[1]}
-                  onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
-                  className="w-full"
+                  type="checkbox"
+                  checked={saleOnly}
+                  onChange={(e) => updateParam("sale", e.target.checked ? "true" : "")}
+                  className="w-4 h-4 text-orange-500 rounded"
                 />
-                <div className="flex justify-between text-sm">
-                  <span>0đ</span>
-                  <span>{priceRange[1].toLocaleString("vi-VN")}đ</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Size Filter */}
-            <div>
-              <h3 className="font-semibold mb-3">Kích thước</h3>
-              <div className="flex flex-wrap gap-2">
-                {allSizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => toggleSize(size)}
-                    className={`px-3 py-1 border rounded ${
-                      selectedSizes.includes(size)
-                        ? "bg-orange-500 text-white border-orange-500"
-                        : "border-gray-300 hover:border-orange-500"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Color Filter */}
-            <div>
-              <h3 className="font-semibold mb-3">Màu sắc</h3>
-              <div className="flex flex-wrap gap-2">
-                {allColors.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => toggleColor(color)}
-                    className={`px-3 py-1 border rounded text-sm ${
-                      selectedColors.includes(color)
-                        ? "bg-orange-500 text-white border-orange-500"
-                        : "border-gray-300 hover:border-orange-500"
-                    }`}
-                  >
-                    {color}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Brand Filter */}
-            <div>
-              <h3 className="font-semibold mb-3">Thương hiệu</h3>
-              <div className="space-y-2">
-                {allBrands.map((brand) => (
-                  <label key={brand} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedBrands.includes(brand)}
-                      onChange={() => toggleBrand(brand)}
-                      className="w-4 h-4 text-orange-500 rounded"
-                    />
-                    <span className="text-sm">{brand}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Rating Filter */}
-            <div>
-              <h3 className="font-semibold mb-3">Đánh giá</h3>
-              <div className="space-y-2">
-                {[4, 3, 2, 1].map((rating) => (
-                  <label key={rating} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="rating"
-                      checked={minRating === rating}
-                      onChange={() => setMinRating(rating)}
-                      className="w-4 h-4 text-orange-500"
-                    />
-                    <span className="text-sm">Từ {rating} sao trở lên</span>
-                  </label>
-                ))}
-              </div>
+                <span className="text-sm">Chỉ sản phẩm giảm giá</span>
+              </label>
             </div>
 
             {/* Clear Filters */}
             <button
-              onClick={clearFilters}
-              className="w-full py-2 border border-orange-500 text-orange-500 rounded hover:bg-orange-50"
+              onClick={() => setSearchParams({})}
+              className="w-full text-orange-500 border border-orange-500 px-4 py-2 rounded-lg hover:bg-orange-50 text-sm"
             >
               Xóa bộ lọc
             </button>
           </div>
-        </aside>
+        </div>
 
-        {/* Products Grid */}
-        <div className="flex-1">
-          {/* Sort and Filter Toggle */}
-          <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={() => setShowFilters(true)}
-              className="lg:hidden flex items-center gap-2 px-4 py-2 border rounded"
-            >
-              <Filter className="w-5 h-5" />
-              Bộ lọc
-            </button>
-
-            <div className="flex items-center gap-2 ml-auto">
+        {/* Product Grid */}
+        <div className="lg:col-span-3">
+          {/* Sort */}
+          <div className="flex items-center justify-end mb-6">
+            <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">Sắp xếp:</span>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => updateParam("sort", e.target.value)}
                 className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="newest">Mới nhất</option>
                 <option value="price-asc">Giá tăng dần</option>
                 <option value="price-desc">Giá giảm dần</option>
-                <option value="bestseller">Bán chạy</option>
                 <option value="rating">Đánh giá cao</option>
+                <option value="bestseller">Bán chạy</option>
               </select>
             </div>
           </div>
 
-          {/* Products */}
-          {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+          {paginatedProducts.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-12">
+                  <button
+                    disabled={currentPage <= 1}
+                    onClick={() => updateParam("page", String(currentPage - 1))}
+                    className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => updateParam("page", String(page))}
+                      className={`w-10 h-10 rounded-lg transition-colors ${
+                        currentPage === page
+                          ? "bg-orange-500 text-white"
+                          : "border hover:bg-gray-50"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    disabled={currentPage >= totalPages}
+                    onClick={() => updateParam("page", String(currentPage + 1))}
+                    className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-20">
-              <p className="text-gray-500 text-lg">Không tìm thấy sản phẩm phù hợp</p>
+              <p className="text-xl font-bold mb-4">Không tìm thấy sản phẩm nào</p>
+              <p className="text-gray-600 mb-6">Thử thay đổi bộ lọc để xem thêm sản phẩm</p>
+              <button
+                onClick={() => setSearchParams({})}
+                className="text-orange-500 hover:underline"
+              >
+                Xóa tất cả bộ lọc
+              </button>
             </div>
           )}
         </div>

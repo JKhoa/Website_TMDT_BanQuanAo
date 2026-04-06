@@ -1,7 +1,19 @@
 import { Link } from "react-router";
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function Footer() {
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+
+  const handleNewsletter = (e) => {
+    e.preventDefault();
+    if (newsletterEmail) {
+      toast.success("Đăng ký nhận tin thành công!");
+      setNewsletterEmail("");
+    }
+  };
+
   return (
     <footer className="bg-gray-900 text-white mt-20">
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -59,17 +71,17 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Hỗ trợ khách hàng</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link to="/shipping" className="hover:text-orange-500">
+                <Link to="/policy/shipping" className="hover:text-orange-500">
                   Chính sách giao hàng
                 </Link>
               </li>
               <li>
-                <Link to="/return" className="hover:text-orange-500">
+                <Link to="/policy/return" className="hover:text-orange-500">
                   Chính sách đổi trả
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="hover:text-orange-500">
+                <Link to="/policy/privacy" className="hover:text-orange-500">
                   Chính sách bảo mật
                 </Link>
               </li>
@@ -108,16 +120,19 @@ export function Footer() {
             <p className="text-gray-400 text-sm mb-4">
               Nhận thông tin về sản phẩm mới và ưu đãi đặc biệt
             </p>
-            <div className="flex gap-2">
+            <form onSubmit={handleNewsletter} className="flex gap-2">
               <input
                 type="email"
                 placeholder="Email của bạn"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:border-orange-500"
+                required
               />
-              <button className="px-6 py-2 bg-orange-500 rounded-lg hover:bg-orange-600">
+              <button type="submit" className="px-6 py-2 bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors">
                 Đăng ký
               </button>
-            </div>
+            </form>
           </div>
         </div>
 

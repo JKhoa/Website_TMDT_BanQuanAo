@@ -1,10 +1,11 @@
+import { memo } from "react";
 import { Link } from "react-router";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useWishlist } from "../contexts/WishlistContext";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
 
-export function ProductCard({ product }) {
+export const ProductCard = memo(function ProductCard({ product }) {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addToCart } = useCart();
 
@@ -34,6 +35,7 @@ export function ProductCard({ product }) {
           <img
             src={product.image}
             alt={product.name}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           
@@ -64,13 +66,13 @@ export function ProductCard({ product }) {
                 isInWishlist(product.id)
                   ? "bg-red-500 text-white"
                   : "bg-white text-gray-700"
-              } hover:scale-110 transition-transform`}
+              } hover:scale-110 transition-transform shadow-sm`}
             >
               <Heart className="w-5 h-5" fill={isInWishlist(product.id) ? "currentColor" : "none"} />
             </button>
             <button
               onClick={handleAddToCart}
-              className="p-2 bg-white rounded-full text-gray-700 hover:scale-110 transition-transform"
+              className="p-2 bg-white rounded-full text-gray-700 hover:scale-110 transition-transform shadow-sm"
             >
               <ShoppingCart className="w-5 h-5" />
             </button>
@@ -129,4 +131,4 @@ export function ProductCard({ product }) {
       </div>
     </Link>
   );
-}
+});

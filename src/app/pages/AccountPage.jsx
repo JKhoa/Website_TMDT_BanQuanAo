@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router";
-import { User, Package, Heart, MapPin, LogOut } from "lucide-react";
+import { User, Package, Heart, MapPin, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 
@@ -20,10 +20,13 @@ export function AccountPage() {
 
   const menuItems = [
     { path: "/account", label: "Thông tin tài khoản", icon: User },
-    { path: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
+    user?.role === "admin" 
+      ? { path: "/admin", label: "Admin", icon: LayoutDashboard }
+      : { path: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
     { path: "/account/wishlist", label: "Yêu thích", icon: Heart },
     { path: "/account/addresses", label: "Địa chỉ", icon: MapPin }
   ];
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

@@ -1,25 +1,27 @@
 export const products = [
-  // Nam - Áo thun
+  // ========== NAM - ÁO THUN ==========
   {
     id: 1,
     name: "Áo Thun Nam Premium",
+    sku: "AT-NAM-001",
     category: "nam",
     subcategory: "ao-thun",
     price: 299000,
     salePrice: 199000,
     rating: 4.5,
     reviews: 128,
-    image: "https://images.unsplash.com/photo-1759572095329-1dcf9522762b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwc3VtbWVyJTIwdHNoaXJ0fGVufDF8fHx8MTc3Mjg3MjU2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600",
     images: [
-      "https://images.unsplash.com/photo-1759572095329-1dcf9522762b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwc3VtbWVyJTIwdHNoaXJ0fGVufDF8fHx8MTc3Mjg3MjU2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "https://images.unsplash.com/photo-1759572095329-1dcf9522762b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwc3VtbWVyJTIwdHNoaXJ0fGVufDF8fHx8MTc3Mjg3MjU2M3ww&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600",
+      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600"
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["Đen", "Trắng", "Xám", "Navy"],
     brand: "Fashion Co.",
     material: "100% Cotton",
-    description: "Áo thun nam cao cấp, chất liệu cotton thoáng mát, form dáng regular fit phù hợp mọi vóc dáng.",
+    description: "Áo thun nam cao cấp, chất liệu cotton thoáng mát, form dáng regular fit phù hợp mọi vóc dáng. Đường may tinh tế, không xù lông sau nhiều lần giặt.",
     washGuide: "Giặt máy ở nhiệt độ thường, không sử dụng chất tẩy",
+    tags: ["áo thun", "cotton", "nam", "basic", "regular fit"],
     stock: 150,
     isBestSeller: true,
     isNewArrival: true
@@ -27,22 +29,25 @@ export const products = [
   {
     id: 2,
     name: "Áo Sơ Mi Nam Công Sở",
+    sku: "ASM-NAM-001",
     category: "nam",
     subcategory: "ao-so-mi",
     price: 450000,
     salePrice: 350000,
     rating: 4.8,
     reviews: 96,
-    image: "https://images.unsplash.com/photo-1618008797651-3eb256213400?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBtYWxlJTIwc2hpcnR8ZW58MXx8fHwxNzcyODcyNTYwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600",
     images: [
-      "https://images.unsplash.com/photo-1618008797651-3eb256213400?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBtYWxlJTIwc2hpcnR8ZW58MXx8fHwxNzcyODcyNTYwfDA&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600",
+      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600"
     ],
     sizes: ["S", "M", "L", "XL"],
     colors: ["Trắng", "Xanh nhạt", "Hồng", "Xám"],
     brand: "Office Style",
     material: "Cotton pha polyester",
-    description: "Áo sơ mi nam công sở, thiết kế thanh lịch, dễ dàng phối đồ.",
+    description: "Áo sơ mi nam công sở, thiết kế thanh lịch, dễ dàng phối đồ. Chất vải mềm mại, không nhăn, phù hợp cho môi trường công sở.",
     washGuide: "Giặt tay hoặc giặt máy nhẹ nhàng",
+    tags: ["sơ mi", "công sở", "nam", "thanh lịch", "slim fit"],
     stock: 80,
     isBestSeller: true,
     isNewArrival: false
@@ -50,22 +55,25 @@ export const products = [
   {
     id: 3,
     name: "Áo Khoác Bomber Nam",
+    sku: "AK-NAM-001",
     category: "nam",
     subcategory: "ao-khoac",
     price: 890000,
     salePrice: 690000,
     rating: 4.7,
     reviews: 75,
-    image: "https://images.unsplash.com/photo-1630724725268-8272ac390de7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBtYWxlJTIwamFja2V0fGVufDF8fHx8MTc3Mjg3MjU2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600",
     images: [
-      "https://images.unsplash.com/photo-1630724725268-8272ac390de7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBtYWxlJTIwamFja2V0fGVufDF8fHx8MTc3Mjg3MjU2MXww&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600",
+      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600"
     ],
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["Đen", "Navy", "Xanh rêu"],
     brand: "Urban Fashion",
     material: "Polyester cao cấp",
-    description: "Áo khoác bomber phong cách năng động, giữ ấm tốt.",
+    description: "Áo khoác bomber phong cách năng động, giữ ấm tốt. Thiết kế hiện đại với khóa kéo chắc chắn và túi tiện lợi.",
     washGuide: "Giặt khô hoặc giặt tay",
+    tags: ["khoác", "bomber", "nam", "streetwear", "năng động"],
     stock: 45,
     isBestSeller: false,
     isNewArrival: true
@@ -73,47 +81,128 @@ export const products = [
   {
     id: 4,
     name: "Quần Jeans Nam Slim Fit",
+    sku: "QJ-NAM-001",
     category: "nam",
     subcategory: "quan-jeans",
     price: 550000,
     salePrice: 450000,
     rating: 4.6,
     reviews: 142,
-    image: "https://images.unsplash.com/photo-1602585198422-d795fa9bfd6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwamVhbnMlMjBkZW5pbXxlbnwxfHx8fDE3NzI4MTYzNDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600",
     images: [
-      "https://images.unsplash.com/photo-1602585198422-d795fa9bfd6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwamVhbnMlMjBkZW5pbXxlbnwxfHx8fDE3NzI4MTYzNDB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600",
+      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600"
     ],
     sizes: ["29", "30", "31", "32", "33", "34"],
     colors: ["Xanh đậm", "Xanh nhạt", "Đen"],
     brand: "Denim Co.",
     material: "Denim cotton",
-    description: "Quần jeans nam form slim fit ôm vừa phải, tôn dáng.",
+    description: "Quần jeans nam form slim fit ôm vừa phải, tôn dáng. Co giãn tốt, thoải mái khi vận động.",
     washGuide: "Giặt ngược mặt, không ngâm lâu",
+    tags: ["jeans", "slim fit", "nam", "denim", "quần dài"],
     stock: 120,
     isBestSeller: true,
     isNewArrival: false
   },
+  {
+    id: 11,
+    name: "Áo Polo Nam Classic",
+    sku: "AP-NAM-001",
+    category: "nam",
+    subcategory: "ao-thun",
+    price: 380000,
+    salePrice: 299000,
+    rating: 4.4,
+    reviews: 85,
+    image: "https://images.unsplash.com/photo-1625910513413-5fc42c3e88dd?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1625910513413-5fc42c3e88dd?w=600"
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Đen", "Trắng", "Navy", "Đỏ"],
+    brand: "Fashion Co.",
+    material: "Cotton pique",
+    description: "Áo polo nam classic, form regular fit thoải mái. Chất vải pique thoáng mát, phù hợp đi chơi lẫn đi làm.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["polo", "nam", "classic", "thoáng mát", "casual"],
+    stock: 100,
+    isBestSeller: false,
+    isNewArrival: true
+  },
+  {
+    id: 12,
+    name: "Quần Short Nam Kaki",
+    sku: "QS-NAM-001",
+    category: "nam",
+    subcategory: "quan-short",
+    price: 320000,
+    salePrice: 250000,
+    rating: 4.3,
+    reviews: 67,
+    image: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600"
+    ],
+    sizes: ["29", "30", "31", "32", "33", "34"],
+    colors: ["Be", "Xanh navy", "Đen"],
+    brand: "Urban Fashion",
+    material: "Kaki cotton",
+    description: "Quần short nam kaki thoáng mát cho mùa hè. Form regular fit, có túi tiện lợi.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["short", "nam", "kaki", "mùa hè", "thoáng mát"],
+    stock: 90,
+    isBestSeller: false,
+    isNewArrival: true
+  },
+  {
+    id: 13,
+    name: "Áo Thun Henley Nam",
+    sku: "AT-NAM-002",
+    category: "nam",
+    subcategory: "ao-thun",
+    price: 350000,
+    salePrice: null,
+    rating: 4.5,
+    reviews: 43,
+    image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600"
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Trắng", "Đen", "Xám đậm"],
+    brand: "Fashion Co.",
+    material: "Cotton slub",
+    description: "Áo thun henley nam cổ tròn nút, phong cách casual hiện đại. Chất cotton slub mềm mại tự nhiên.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["henley", "nam", "casual", "basic", "cotton"],
+    stock: 65,
+    isBestSeller: false,
+    isNewArrival: false
+  },
 
-  // Nữ
+  // ========== NỮ ==========
   {
     id: 5,
     name: "Váy Maxi Nữ Dự Tiệc",
+    sku: "VM-NU-001",
     category: "nu",
     subcategory: "vay",
     price: 750000,
     salePrice: 550000,
     rating: 4.9,
     reviews: 203,
-    image: "https://images.unsplash.com/photo-1747707500073-65dd5c1407b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBmZW1hbGUlMjBkcmVzc3xlbnwxfHx8fDE3NzI4NzI1NjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600",
     images: [
-      "https://images.unsplash.com/photo-1747707500073-65dd5c1407b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBmZW1hbGUlMjBkcmVzc3xlbnwxfHx8fDE3NzI4NzI1NjF8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600",
+      "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600"
     ],
     sizes: ["S", "M", "L"],
     colors: ["Đỏ", "Đen", "Trắng", "Xanh navy"],
     brand: "Elegant Style",
     material: "Lụa cao cấp",
-    description: "Váy maxi sang trọng, phù hợp dự tiệc và sự kiện quan trọng.",
+    description: "Váy maxi sang trọng, phù hợp dự tiệc và sự kiện quan trọng. Chất lụa mềm rủ, tôn dáng người mặc.",
     washGuide: "Giặt khô",
+    tags: ["váy", "maxi", "nữ", "dự tiệc", "sang trọng", "lụa"],
     stock: 30,
     isBestSeller: true,
     isNewArrival: true
@@ -121,47 +210,154 @@ export const products = [
   {
     id: 6,
     name: "Áo Kiểu Nữ Công Sở",
+    sku: "AK-NU-001",
     category: "nu",
     subcategory: "ao-kieu",
     price: 350000,
     salePrice: 250000,
     rating: 4.5,
     reviews: 167,
-    image: "https://images.unsplash.com/photo-1612357917631-d8697c2af152?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBmZW1hbGUlMjBibG91c2V8ZW58MXx8fHwxNzcyODcyNTYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=600",
     images: [
-      "https://images.unsplash.com/photo-1612357917631-d8697c2af152?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBmZW1hbGUlMjBibG91c2V8ZW58MXx8fHwxNzcyODcyNTYyfDA&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=600",
+      "https://images.unsplash.com/photo-1551489186-cf8726f514f8?w=600"
     ],
     sizes: ["S", "M", "L", "XL"],
     colors: ["Trắng", "Be", "Xanh nhạt", "Hồng"],
     brand: "Office Lady",
     material: "Vải lụa tơ tằm",
-    description: "Áo kiểu nữ thanh lịch, dễ phối đồ công sở.",
+    description: "Áo kiểu nữ thanh lịch, dễ phối đồ công sở. Thiết kế cổ V trang nhã, tay loe nhẹ nhàng.",
     washGuide: "Giặt tay, không vắt mạnh",
+    tags: ["áo kiểu", "nữ", "công sở", "thanh lịch", "lụa"],
     stock: 95,
     isBestSeller: true,
     isNewArrival: false
   },
+  {
+    id: 14,
+    name: "Áo Thun Nữ Oversize",
+    sku: "AT-NU-001",
+    category: "nu",
+    subcategory: "ao-thun",
+    price: 280000,
+    salePrice: 220000,
+    rating: 4.6,
+    reviews: 189,
+    image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600"
+    ],
+    sizes: ["S", "M", "L"],
+    colors: ["Trắng", "Đen", "Hồng pastel", "Xanh mint"],
+    brand: "Fashion Co.",
+    material: "Cotton 100%",
+    description: "Áo thun nữ oversize trẻ trung, phong cách Hàn Quốc. Chất cotton mềm mại, thoáng mát.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["áo thun", "nữ", "oversize", "Hàn Quốc", "trẻ trung"],
+    stock: 200,
+    isBestSeller: true,
+    isNewArrival: true
+  },
+  {
+    id: 15,
+    name: "Váy Liền Body Nữ",
+    sku: "VL-NU-001",
+    category: "nu",
+    subcategory: "vay",
+    price: 490000,
+    salePrice: 390000,
+    rating: 4.7,
+    reviews: 134,
+    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600"
+    ],
+    sizes: ["S", "M", "L"],
+    colors: ["Đen", "Đỏ", "Be"],
+    brand: "Elegant Style",
+    material: "Thun co giãn",
+    description: "Váy liền body tôn dáng, phù hợp đi tiệc hoặc đi chơi. Chất thun co giãn 4 chiều thoải mái.",
+    washGuide: "Giặt tay hoặc giặt máy nhẹ",
+    tags: ["váy", "body", "nữ", "tôn dáng", "co giãn"],
+    stock: 55,
+    isBestSeller: false,
+    isNewArrival: true
+  },
+  {
+    id: 16,
+    name: "Quần Culottes Nữ",
+    sku: "QC-NU-001",
+    category: "nu",
+    subcategory: "quan",
+    price: 420000,
+    salePrice: 340000,
+    rating: 4.4,
+    reviews: 88,
+    image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600"
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Đen", "Be", "Trắng"],
+    brand: "Office Lady",
+    material: "Vải tuyết mưa",
+    description: "Quần culottes nữ ống rộng thanh lịch, phù hợp công sở và dạo phố. Chất vải rủ đẹp, thoáng mát.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["quần", "culottes", "nữ", "ống rộng", "công sở"],
+    stock: 70,
+    isBestSeller: false,
+    isNewArrival: false
+  },
+  {
+    id: 17,
+    name: "Áo Croptop Nữ Thể Thao",
+    sku: "ACT-NU-001",
+    category: "nu",
+    subcategory: "ao-thun",
+    price: 250000,
+    salePrice: 190000,
+    rating: 4.3,
+    reviews: 112,
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600"
+    ],
+    sizes: ["S", "M", "L"],
+    colors: ["Đen", "Trắng", "Hồng", "Xám"],
+    brand: "Sport Elite",
+    material: "Thun cotton pha spandex",
+    description: "Áo croptop nữ năng động, phù hợp tập gym và dạo phố. Co giãn tốt, thấm hút mồ hôi.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["croptop", "nữ", "thể thao", "gym", "năng động"],
+    stock: 130,
+    isBestSeller: true,
+    isNewArrival: false,
+    isFlashSale: true
+  },
 
-  // Phụ kiện
+  // ========== PHỤ KIỆN ==========
   {
     id: 7,
     name: "Túi Xách Tote Cao Cấp",
+    sku: "TX-PK-001",
     category: "phu-kien",
     subcategory: "tui-xach",
     price: 890000,
     salePrice: 690000,
     rating: 4.8,
     reviews: 89,
-    image: "https://images.unsplash.com/photo-1559563458-527698bf5295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwYWNjZXNzb3JpZXMlMjBiYWd8ZW58MXx8fHwxNzcyNzgxODA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600",
     images: [
-      "https://images.unsplash.com/photo-1559563458-527698bf5295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwYWNjZXNzb3JpZXMlMjBiYWd8ZW58MXx8fHwxNzcyNzgxODA4fDA&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600"
     ],
     sizes: ["One Size"],
     colors: ["Đen", "Nâu", "Be"],
     brand: "Luxury Bag",
     material: "Da PU cao cấp",
-    description: "Túi xách tote thời trang, thiết kế sang trọng.",
+    description: "Túi xách tote thời trang, thiết kế sang trọng. Nhiều ngăn tiện lợi, phù hợp đi làm và dạo phố.",
     washGuide: "Lau sạch bằng khăn ẩm",
+    tags: ["túi xách", "tote", "phụ kiện", "sang trọng", "da"],
     stock: 60,
     isBestSeller: true,
     isNewArrival: true
@@ -169,77 +365,284 @@ export const products = [
   {
     id: 8,
     name: "Giày Sneaker Thể Thao",
+    sku: "GS-PK-001",
     category: "phu-kien",
     subcategory: "giay",
     price: 1200000,
     salePrice: 950000,
     rating: 4.7,
     reviews: 156,
-    image: "https://images.unsplash.com/photo-1650320079970-b4ee8f0dae33?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwc25lYWtlcnMlMjBzaG9lc3xlbnwxfHx8fDE3NzI4NTczODB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
     images: [
-      "https://images.unsplash.com/photo-1650320079970-b4ee8f0dae33?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwc25lYWtlcnMlMjBzaG9lc3xlbnwxfHx8fDE3NzI4NTczODB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600"
     ],
     sizes: ["38", "39", "40", "41", "42", "43"],
     colors: ["Trắng", "Đen", "Trắng/Đen"],
     brand: "Sport Elite",
     material: "Da tổng hợp + mesh",
-    description: "Giày sneaker thể thao năng động, êm ái khi di chuyển.",
+    description: "Giày sneaker thể thao năng động, đế êm ái khi di chuyển. Thiết kế hiện đại, phù hợp mọi outfit.",
     washGuide: "Lau sạch, không ngâm nước",
+    tags: ["giày", "sneaker", "thể thao", "phụ kiện", "năng động"],
     stock: 75,
     isBestSeller: true,
     isNewArrival: false
   },
+  {
+    id: 18,
+    name: "Nón Bucket Unisex",
+    sku: "NB-PK-001",
+    category: "phu-kien",
+    subcategory: "non",
+    price: 180000,
+    salePrice: 140000,
+    rating: 4.2,
+    reviews: 58,
+    image: "https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=600"
+    ],
+    sizes: ["One Size"],
+    colors: ["Đen", "Be", "Xanh navy"],
+    brand: "Urban Fashion",
+    material: "Canvas cotton",
+    description: "Nón bucket unisex phong cách streetwear. Chất canvas dày dặn, chống nắng tốt.",
+    washGuide: "Giặt tay nhẹ nhàng",
+    tags: ["nón", "bucket", "unisex", "streetwear", "phụ kiện"],
+    stock: 150,
+    isBestSeller: false,
+    isNewArrival: true
+  },
+  {
+    id: 19,
+    name: "Thắt Lưng Da Nam",
+    sku: "TL-PK-001",
+    category: "phu-kien",
+    subcategory: "that-lung",
+    price: 450000,
+    salePrice: 350000,
+    rating: 4.6,
+    reviews: 72,
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600"
+    ],
+    sizes: ["S (85cm)", "M (95cm)", "L (105cm)", "XL (115cm)"],
+    colors: ["Đen", "Nâu"],
+    brand: "Luxury Bag",
+    material: "Da bò thật",
+    description: "Thắt lưng da bò thật cao cấp, khóa kim loại sáng bóng. Phù hợp đi làm và dự tiệc.",
+    washGuide: "Lau bằng khăn ẩm, bảo quản nơi khô ráo",
+    tags: ["thắt lưng", "da", "nam", "phụ kiện", "công sở"],
+    stock: 85,
+    isBestSeller: false,
+    isNewArrival: false
+  },
+  {
+    id: 20,
+    name: "Kính Mát Thời Trang",
+    sku: "KM-PK-001",
+    category: "phu-kien",
+    subcategory: "tui-xach",
+    price: 350000,
+    salePrice: 280000,
+    rating: 4.3,
+    reviews: 94,
+    image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600"
+    ],
+    sizes: ["One Size"],
+    colors: ["Đen", "Nâu", "Vàng hổ phách"],
+    brand: "Urban Fashion",
+    material: "Tròng Polarized + gọng kim loại",
+    description: "Kính mát thời trang chống UV400, tròng Polarized chống chói. Thiết kế unisex phù hợp mọi khuôn mặt.",
+    washGuide: "Lau bằng khăn mềm chuyên dụng",
+    tags: ["kính mát", "phụ kiện", "thời trang", "chống UV", "unisex"],
+    stock: 110,
+    isBestSeller: false,
+    isNewArrival: true
+  },
 
-  // Trẻ em
+  // ========== TRẺ EM ==========
   {
     id: 9,
-    name: "Bộ Đồ Trẻ Em",
+    name: "Bộ Đồ Trẻ Em Cotton",
+    sku: "BD-TE-001",
     category: "tre-em",
     subcategory: "bo-do",
     price: 350000,
     salePrice: 250000,
     rating: 4.6,
     reviews: 92,
-    image: "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwa2lkcyUyMGNsb3RoaW5nfGVufDF8fHx8MTc3Mjg3MjU2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600",
     images: [
-      "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwa2lkcyUyMGNsb3RoaW5nfGVufDF8fHx8MTc3Mjg3MjU2M3ww&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600"
     ],
     sizes: ["2-3 tuổi", "4-5 tuổi", "6-7 tuổi", "8-9 tuổi"],
     colors: ["Xanh", "Hồng", "Vàng"],
     brand: "Kids Fashion",
     material: "Cotton organic",
-    description: "Bộ đồ trẻ em an toàn, thoáng mát cho bé.",
+    description: "Bộ đồ trẻ em an toàn, thoáng mát cho bé. Cotton organic 100%, không gây kích ứng da bé.",
     washGuide: "Giặt máy ở nhiệt độ thấp",
+    tags: ["trẻ em", "bộ đồ", "cotton", "organic", "an toàn"],
     stock: 100,
     isBestSeller: false,
     isNewArrival: true
   },
+  {
+    id: 21,
+    name: "Áo Thun Trẻ Em In Hình",
+    sku: "AT-TE-001",
+    category: "tre-em",
+    subcategory: "ao",
+    price: 199000,
+    salePrice: 149000,
+    rating: 4.5,
+    reviews: 78,
+    image: "https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=600"
+    ],
+    sizes: ["3-4 tuổi", "5-6 tuổi", "7-8 tuổi", "9-10 tuổi"],
+    colors: ["Trắng", "Đỏ", "Xanh"],
+    brand: "Kids Fashion",
+    material: "Cotton 100%",
+    description: "Áo thun trẻ em in hình ngộ nghĩnh, chất cotton mềm mại an toàn cho bé.",
+    washGuide: "Giặt máy ở nhiệt độ thấp, lộn mặt trái khi giặt",
+    tags: ["trẻ em", "áo thun", "in hình", "cotton", "ngộ nghĩnh"],
+    stock: 150,
+    isBestSeller: true,
+    isNewArrival: false
+  },
+  {
+    id: 22,
+    name: "Quần Short Trẻ Em",
+    sku: "QS-TE-001",
+    category: "tre-em",
+    subcategory: "quan",
+    price: 180000,
+    salePrice: null,
+    rating: 4.3,
+    reviews: 45,
+    image: "https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=600"
+    ],
+    sizes: ["3-4 tuổi", "5-6 tuổi", "7-8 tuổi", "9-10 tuổi"],
+    colors: ["Navy", "Xám", "Be"],
+    brand: "Kids Fashion",
+    material: "Kaki cotton pha",
+    description: "Quần short trẻ em thoáng mát cho mùa hè. Chất kaki mềm, có dây rút thun tiện lợi.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["trẻ em", "quần short", "mùa hè", "thoáng mát"],
+    stock: 80,
+    isBestSeller: false,
+    isNewArrival: false
+  },
 
-  // Thêm sản phẩm
+  // ========== SẢN PHẨM FLASH SALE ==========
   {
     id: 10,
     name: "Áo Phao Mùa Đông",
+    sku: "AP-NAM-002",
     category: "nam",
     subcategory: "ao-khoac",
     price: 1500000,
     salePrice: 1200000,
     rating: 4.9,
     reviews: 64,
-    image: "https://images.unsplash.com/photo-1768134152610-27355e256513?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwd2ludGVyJTIwY29hdHxlbnwxfHx8fDE3NzI4NzI1NjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1544923246-77307dd270b0?w=600",
     images: [
-      "https://images.unsplash.com/photo-1768134152610-27355e256513?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwd2ludGVyJTIwY29hdHxlbnwxfHx8fDE3NzI4NzI1NjN8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      "https://images.unsplash.com/photo-1544923246-77307dd270b0?w=600"
     ],
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["Đen", "Xanh navy", "Xám"],
     brand: "Winter Style",
     material: "Polyester chần bông",
-    description: "Áo phao mùa đông giữ ấm cực tốt, chống thấm nước.",
+    description: "Áo phao mùa đông giữ ấm cực tốt, chống thấm nước. Lớp lót bông mềm mại, nhẹ nhàng.",
     washGuide: "Giặt khô",
+    tags: ["áo phao", "mùa đông", "nam", "giữ ấm", "chống thấm"],
     stock: 40,
     isBestSeller: true,
     isNewArrival: true,
-    isFlashSale: true,
-    flashSaleEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    isFlashSale: true
+  },
+  {
+    id: 23,
+    name: "Đầm Midi Nữ Hoa Nhí",
+    sku: "DM-NU-001",
+    category: "nu",
+    subcategory: "vay",
+    price: 580000,
+    salePrice: 420000,
+    rating: 4.8,
+    reviews: 156,
+    image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600"
+    ],
+    sizes: ["S", "M", "L"],
+    colors: ["Hồng hoa nhí", "Xanh hoa nhí", "Vàng hoa nhí"],
+    brand: "Elegant Style",
+    material: "Voan chiffon",
+    description: "Đầm midi nữ hoạ tiết hoa nhí nữ tính, phom dáng xòe nhẹ bay bổng. Phù hợp đi dạo phố, du lịch.",
+    washGuide: "Giặt tay, phơi trong bóng mát",
+    tags: ["đầm", "midi", "nữ", "hoa nhí", "nữ tính", "voan"],
+    stock: 45,
+    isBestSeller: true,
+    isNewArrival: true,
+    isFlashSale: true
+  },
+  {
+    id: 24,
+    name: "Áo Sơ Mi Oxford Nam",
+    sku: "ASM-NAM-002",
+    category: "nam",
+    subcategory: "ao-so-mi",
+    price: 520000,
+    salePrice: null,
+    rating: 4.6,
+    reviews: 53,
+    image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600"
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Trắng", "Xanh oxford", "Xám nhạt"],
+    brand: "Office Style",
+    material: "Vải Oxford cotton",
+    description: "Áo sơ mi Oxford nam chất liệu dày dặn, lịch lãm. Phong cách smart casual hoàn hảo.",
+    washGuide: "Giặt máy nhẹ, ủi ở nhiệt độ trung bình",
+    tags: ["sơ mi", "oxford", "nam", "smart casual", "cotton"],
+    stock: 60,
+    isBestSeller: false,
+    isNewArrival: false
+  },
+  {
+    id: 25,
+    name: "Quần Jogger Nam",
+    sku: "QJG-NAM-001",
+    category: "nam",
+    subcategory: "quan-short",
+    price: 420000,
+    salePrice: 320000,
+    rating: 4.5,
+    reviews: 98,
+    image: "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=600",
+    images: [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=600"
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Đen", "Xám", "Navy"],
+    brand: "Sport Elite",
+    material: "Thun nỉ cotton",
+    description: "Quần jogger nam phong cách thể thao, bo chun co giãn. Phù hợp tập gym, chạy bộ hoặc dạo phố.",
+    washGuide: "Giặt máy ở nhiệt độ thường",
+    tags: ["jogger", "nam", "thể thao", "gym", "casual"],
+    stock: 110,
+    isBestSeller: false,
+    isNewArrival: true
   }
 ];
 
@@ -247,7 +650,7 @@ export const categories = [
   {
     id: "nam",
     name: "Nam",
-    image: "https://images.unsplash.com/photo-1618008797651-3eb256213400?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBtYWxlJTIwc2hpcnR8ZW58MXx8fHwxNzcyODcyNTYwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600",
     subcategories: [
       { id: "ao-thun", name: "Áo thun" },
       { id: "ao-so-mi", name: "Áo sơ mi" },
@@ -259,7 +662,7 @@ export const categories = [
   {
     id: "nu",
     name: "Nữ",
-    image: "https://images.unsplash.com/photo-1747707500073-65dd5c1407b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBmZW1hbGUlMjBkcmVzc3xlbnwxfHx8fDE3NzI4NzI1NjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600",
     subcategories: [
       { id: "vay", name: "Váy" },
       { id: "ao-kieu", name: "Áo kiểu" },
@@ -270,7 +673,7 @@ export const categories = [
   {
     id: "tre-em",
     name: "Trẻ em",
-    image: "https://images.unsplash.com/photo-1758782213532-bbb5fd89885e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwa2lkcyUyMGNsb3RoaW5nfGVufDF8fHx8MTc3Mjg3MjU2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600",
     subcategories: [
       { id: "bo-do", name: "Bộ đồ" },
       { id: "ao", name: "Áo" },
@@ -280,7 +683,7 @@ export const categories = [
   {
     id: "phu-kien",
     name: "Phụ kiện",
-    image: "https://images.unsplash.com/photo-1559563458-527698bf5295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwYWNjZXNzb3JpZXMlMjBiYWd8ZW58MXx8fHwxNzcyNzgxODA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600",
     subcategories: [
       { id: "tui-xach", name: "Túi xách" },
       { id: "giay", name: "Giày dép" },
@@ -288,4 +691,20 @@ export const categories = [
       { id: "that-lung", name: "Thắt lưng" }
     ]
   }
+];
+
+// Mock reviews data
+export const mockReviews = [
+  { id: 1, productId: 1, userName: "Nguyễn Văn A", rating: 5, comment: "Chất liệu rất tốt, mặc thoáng mát. Sẽ mua thêm!", date: "2026-03-15", helpful: 12 },
+  { id: 2, productId: 1, userName: "Trần Thị B", rating: 4, comment: "Áo đẹp, đúng size. Giao hàng nhanh.", date: "2026-03-10", helpful: 8 },
+  { id: 3, productId: 1, userName: "Lê Văn C", rating: 5, comment: "Mua lần 2 rồi, chất lượng vẫn rất tốt.", date: "2026-03-05", helpful: 5 },
+  { id: 4, productId: 2, userName: "Phạm Thị D", rating: 5, comment: "Sơ mi rất đẹp, mặc đi làm cực sang.", date: "2026-03-12", helpful: 15 },
+  { id: 5, productId: 2, userName: "Hoàng Văn E", rating: 4, comment: "Chất vải tốt, form đẹp. Hơi rộng 1 size nhé.", date: "2026-03-08", helpful: 10 },
+  { id: 6, productId: 4, userName: "Nguyễn Thị F", rating: 5, comment: "Quần jeans chất, co giãn tốt, tôn dáng.", date: "2026-03-14", helpful: 20 },
+  { id: 7, productId: 5, userName: "Trần Văn G", rating: 5, comment: "Váy cực đẹp! Vải lụa mềm mại, mặc dự tiệc rất sang.", date: "2026-03-11", helpful: 25 },
+  { id: 8, productId: 5, userName: "Lê Thị H", rating: 5, comment: "Đẹp hơn ảnh nhiều, sẽ giới thiệu cho bạn bè.", date: "2026-03-09", helpful: 18 },
+  { id: 9, productId: 7, userName: "Phạm Văn I", rating: 4, comment: "Túi đẹp, nhiều ngăn tiện lợi. Da hơi cứng ban đầu.", date: "2026-03-13", helpful: 7 },
+  { id: 10, productId: 8, userName: "Hoàng Thị K", rating: 5, comment: "Giày rất êm, chạy bộ thoải mái. Size chuẩn.", date: "2026-03-07", helpful: 14 },
+  { id: 11, productId: 14, userName: "Nguyễn Thị L", rating: 5, comment: "Áo oversize mặc thoải mát, phong cách Hàn Quốc.", date: "2026-03-16", helpful: 9 },
+  { id: 12, productId: 10, userName: "Trần Văn M", rating: 5, comment: "Áo phao ấm thật sự, đi Đà Lạt mặc cực ổn.", date: "2026-03-06", helpful: 22 },
 ];

@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
-import { CreditCard, Wallet, Building2, Check } from "lucide-react";
+import { CreditCard, Wallet, Building2, Check, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
 export function CheckoutPage() {
@@ -25,6 +25,32 @@ export function CheckoutPage() {
   const subtotal = getCartTotal();
   const shippingFee = shippingMethod === "express" ? 50000 : subtotal > 500000 ? 0 : 30000;
   const total = subtotal + shippingFee;
+
+  // Redirect if cart is empty
+  useEffect(() => {
+    if (cart.length === 0) {
+      navigate("/cart");
+    }
+  }, [cart.length, navigate]);
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <LogIn className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+        <h2 className="text-2xl font-bold mb-4">Vui lòng đăng nhập</h2>
+        <p className="text-gray-600 mb-8">Bạn cần đăng nhập để tiến hành thanh toán</p>
+        <Link
+          to="/login"
+          className="inline-block bg-orange-500 text-white px-8 py-3 rounded-lg hover:bg-orange-600 transition-colors"
+        >
+          Đăng nhập ngay
+        </Link>
+      </div>
+    );
+  }
+
+  if (cart.length === 0) return null;
 
   const handleSubmitShipping = (e) => {
     e.preventDefault();
@@ -56,16 +82,11 @@ export function CheckoutPage() {
       total
     };
 
-    createOrder(order);
+    const newOrder = createOrder(order);
     clearCart();
     toast.success("Đặt hàng thành công!");
-    navigate("/account/orders");
+    navigate(`/order-success?orderId=${newOrder.id}`);
   };
-
-  if (cart.length === 0) {
-    navigate("/cart");
-    return null;
-  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -77,7 +98,7 @@ export function CheckoutPage() {
           {[1, 2, 3, 4].map((s) => (
             <div key={s} className="flex items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                   step >= s ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-600"
                 }`}
               >
@@ -85,7 +106,7 @@ export function CheckoutPage() {
               </div>
               {s < 4 && (
                 <div
-                  className={`w-20 h-1 ${step > s ? "bg-orange-500" : "bg-gray-200"}`}
+                  className={`w-20 h-1 transition-colors ${step > s ? "bg-orange-500" : "bg-gray-200"}`}
                 />
               )}
             </div>
@@ -172,7 +193,7 @@ export function CheckoutPage() {
               </div>
               <button
                 type="submit"
-                className="w-full mt-6 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600"
+                className="w-full mt-6 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors"
               >
                 Tiếp tục
               </button>
@@ -184,32 +205,16 @@ export function CheckoutPage() {
             <form onSubmit={handleSubmitShippingMethod} className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-bold mb-6">Phương thức vận chuyển</h2>
               <div className="space-y-4">
-                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500">
-                  <input
-                    type="radio"
-                    name="shipping"
-                    value="standard"
-                    checked={shippingMethod === "standard"}
-                    onChange={(e) => setShippingMethod(e.target.value)}
-                    className="w-5 h-5 text-orange-500"
-                  />
+                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500 transition-colors">
+                  <input type="radio" name="shipping" value="standard" checked={shippingMethod === "standard"} onChange={(e) => setShippingMethod(e.target.value)} className="w-5 h-5 text-orange-500" />
                   <div className="ml-4 flex-1">
                     <div className="font-semibold">Giao hàng tiêu chuẩn</div>
                     <div className="text-sm text-gray-600">3-5 ngày làm việc</div>
                   </div>
-                  <div className="font-semibold">
-                    {subtotal > 500000 ? "Miễn phí" : "30.000đ"}
-                  </div>
+                  <div className="font-semibold">{subtotal > 500000 ? "Miễn phí" : "30.000đ"}</div>
                 </label>
-                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500">
-                  <input
-                    type="radio"
-                    name="shipping"
-                    value="express"
-                    checked={shippingMethod === "express"}
-                    onChange={(e) => setShippingMethod(e.target.value)}
-                    className="w-5 h-5 text-orange-500"
-                  />
+                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500 transition-colors">
+                  <input type="radio" name="shipping" value="express" checked={shippingMethod === "express"} onChange={(e) => setShippingMethod(e.target.value)} className="w-5 h-5 text-orange-500" />
                   <div className="ml-4 flex-1">
                     <div className="font-semibold">Giao hàng nhanh</div>
                     <div className="text-sm text-gray-600">1-2 ngày làm việc</div>
@@ -218,19 +223,8 @@ export function CheckoutPage() {
                 </label>
               </div>
               <div className="flex gap-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  Quay lại
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600"
-                >
-                  Tiếp tục
-                </button>
+                <button type="button" onClick={() => setStep(1)} className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Quay lại</button>
+                <button type="submit" className="flex-1 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors">Tiếp tục</button>
               </div>
             </form>
           )}
@@ -240,45 +234,24 @@ export function CheckoutPage() {
             <form onSubmit={handleSubmitPayment} className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-bold mb-6">Phương thức thanh toán</h2>
               <div className="space-y-4">
-                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="cod"
-                    checked={paymentMethod === "cod"}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-5 h-5 text-orange-500"
-                  />
+                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500 transition-colors">
+                  <input type="radio" name="payment" value="cod" checked={paymentMethod === "cod"} onChange={(e) => setPaymentMethod(e.target.value)} className="w-5 h-5 text-orange-500" />
                   <Wallet className="ml-4 w-6 h-6 text-gray-600" />
                   <div className="ml-4">
                     <div className="font-semibold">Thanh toán khi nhận hàng (COD)</div>
                     <div className="text-sm text-gray-600">Thanh toán bằng tiền mặt khi nhận hàng</div>
                   </div>
                 </label>
-                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="bank"
-                    checked={paymentMethod === "bank"}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-5 h-5 text-orange-500"
-                  />
+                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500 transition-colors">
+                  <input type="radio" name="payment" value="bank" checked={paymentMethod === "bank"} onChange={(e) => setPaymentMethod(e.target.value)} className="w-5 h-5 text-orange-500" />
                   <Building2 className="ml-4 w-6 h-6 text-gray-600" />
                   <div className="ml-4">
                     <div className="font-semibold">Chuyển khoản ngân hàng</div>
                     <div className="text-sm text-gray-600">Chuyển khoản qua internet banking</div>
                   </div>
                 </label>
-                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="card"
-                    checked={paymentMethod === "card"}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-5 h-5 text-orange-500"
-                  />
+                <label className="flex items-center p-4 border rounded cursor-pointer hover:border-orange-500 transition-colors">
+                  <input type="radio" name="payment" value="card" checked={paymentMethod === "card"} onChange={(e) => setPaymentMethod(e.target.value)} className="w-5 h-5 text-orange-500" />
                   <CreditCard className="ml-4 w-6 h-6 text-gray-600" />
                   <div className="ml-4">
                     <div className="font-semibold">Thanh toán bằng thẻ</div>
@@ -287,19 +260,8 @@ export function CheckoutPage() {
                 </label>
               </div>
               <div className="flex gap-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  Quay lại
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600"
-                >
-                  Tiếp tục
-                </button>
+                <button type="button" onClick={() => setStep(2)} className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Quay lại</button>
+                <button type="submit" className="flex-1 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors">Tiếp tục</button>
               </div>
             </form>
           )}
@@ -308,29 +270,20 @@ export function CheckoutPage() {
           {step === 4 && (
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-bold mb-6">Xác nhận đơn hàng</h2>
-              
-              {/* Shipping Info */}
               <div className="mb-6">
                 <h3 className="font-semibold mb-2">Thông tin giao hàng</h3>
                 <div className="text-sm text-gray-600">
                   <p>{shippingInfo.name} - {shippingInfo.phone}</p>
                   <p>{shippingInfo.address}, {shippingInfo.ward}, {shippingInfo.district}, {shippingInfo.city}</p>
                 </div>
-                <button
-                  onClick={() => setStep(1)}
-                  className="text-sm text-orange-500 hover:underline mt-2"
-                >
-                  Chỉnh sửa
-                </button>
+                <button onClick={() => setStep(1)} className="text-sm text-orange-500 hover:underline mt-2">Chỉnh sửa</button>
               </div>
-
-              {/* Items */}
               <div className="mb-6">
                 <h3 className="font-semibold mb-2">Sản phẩm ({cart.length})</h3>
                 <div className="space-y-3">
                   {cart.map((item) => (
                     <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-3 text-sm">
-                      <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                      <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" loading="lazy" />
                       <div className="flex-1">
                         <p className="font-medium">{item.name}</p>
                         <p className="text-gray-600">Size: {item.size}, Màu: {item.color}</p>
@@ -343,10 +296,9 @@ export function CheckoutPage() {
                   ))}
                 </div>
               </div>
-
               <button
                 onClick={handleConfirmOrder}
-                className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600"
+                className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors"
               >
                 Xác nhận đặt hàng
               </button>
