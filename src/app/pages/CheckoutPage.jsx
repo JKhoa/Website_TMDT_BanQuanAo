@@ -4,6 +4,7 @@ import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import { CreditCard, Wallet, Building2, Check, LogIn } from "lucide-react";
 import { toast } from "sonner";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -283,7 +284,7 @@ export function CheckoutPage() {
                 <div className="space-y-3">
                   {cart.map((item) => (
                     <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-3 text-sm">
-                      <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" loading="lazy" />
+                      <img src={resolveImageUrl(item.image)} alt={item.name} className="w-16 h-16 object-cover rounded" loading="lazy" />
                       <div className="flex-1">
                         <p className="font-medium">{item.name}</p>
                         <p className="text-gray-600">Size: {item.size}, Màu: {item.color}</p>

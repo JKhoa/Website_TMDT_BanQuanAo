@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Search, Eye, ChevronDown } from "lucide-react";
 import api from "../../services/api";
 import { toast } from "sonner";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 const statusMap = {
   pending: { label: "Chờ xác nhận", color: "bg-yellow-100 text-yellow-800" },
@@ -132,7 +133,7 @@ export function AdminOrders() {
                               <div className="space-y-2">
                                 {order.items?.map((item, idx) => (
                                   <div key={idx} className="flex items-center gap-3">
-                                    <img src={item.product_image} alt={item.product_name} className="w-10 h-10 rounded object-cover" />
+                                    <img src={resolveImageUrl(item.product_image)} alt={item.product_name} className="w-10 h-10 rounded object-cover" />
                                     <div className="flex-1">
                                       <p className="text-sm">{item.product_name}</p>
                                       <p className="text-xs text-gray-500">Size: {item.size} | Màu: {item.color} | SL: {item.quantity}</p>

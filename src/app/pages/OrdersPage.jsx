@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Package, ChevronDown, ChevronUp, Eye } from "lucide-react";
 import { Link } from "react-router";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 const statusMap = {
   pending: { label: "Chờ xác nhận", color: "bg-yellow-100 text-yellow-800" },
@@ -85,7 +86,7 @@ export function OrdersPage() {
                           className="flex gap-3 hover:bg-gray-50 rounded-lg p-2 transition-colors"
                         >
                           <img
-                            src={item.image}
+                            src={resolveImageUrl(item.image)}
                             alt={item.name}
                             className="w-20 h-20 object-cover rounded"
                             loading="lazy"

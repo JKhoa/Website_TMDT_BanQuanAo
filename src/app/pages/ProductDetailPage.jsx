@@ -6,6 +6,7 @@ import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
 import { ProductCard } from "../components/ProductCard";
 import { toast } from "sonner";
+import { resolveImageList } from "../utils/imageUrl";
 
 export function ProductDetailPage() {
   const { id } = useParams();
@@ -38,6 +39,7 @@ export function ProductDetailPage() {
     .slice(0, 4);
 
   const categoryName = { nam: "Nam", nu: "Nữ", "tre-em": "Trẻ em", "phu-kien": "Phụ kiện" };
+  const productImages = resolveImageList(product.images, product.image);
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -97,13 +99,13 @@ export function ProductDetailPage() {
         <div>
           <div className="aspect-square rounded-lg overflow-hidden mb-4 bg-gray-100">
             <img
-              src={product.images[selectedImage]}
+              src={productImages[selectedImage] || productImages[0]}
               alt={product.name}
               className="w-full h-full object-cover"
             />
           </div>
           <div className="grid grid-cols-4 gap-4">
-            {product.images.map((img, idx) => (
+            {productImages.map((img, idx) => (
               <button
                 key={idx}
                 onClick={() => setSelectedImage(idx)}

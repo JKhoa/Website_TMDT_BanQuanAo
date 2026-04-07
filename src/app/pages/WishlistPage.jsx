@@ -3,6 +3,7 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { useWishlist } from "../contexts/WishlistContext";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 export function WishlistPage() {
   const { wishlist, removeFromWishlist } = useWishlist();
@@ -35,7 +36,7 @@ export function WishlistPage() {
             <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden group">
               <Link to={`/product/${product.id}`} className="block relative aspect-square bg-gray-100">
                 <img
-                  src={product.image}
+                  src={resolveImageUrl(product.image)}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />

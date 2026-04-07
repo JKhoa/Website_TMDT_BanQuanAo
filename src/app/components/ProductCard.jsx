@@ -4,6 +4,7 @@ import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useWishlist } from "../contexts/WishlistContext";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "sonner";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 export const ProductCard = memo(function ProductCard({ product }) {
   const { isInWishlist, toggleWishlist } = useWishlist();
@@ -33,7 +34,7 @@ export const ProductCard = memo(function ProductCard({ product }) {
         {/* Image */}
         <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
           <img
-            src={product.image}
+            src={resolveImageUrl(product.image)}
             alt={product.name}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

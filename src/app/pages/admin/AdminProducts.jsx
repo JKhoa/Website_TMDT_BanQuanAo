@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Search, X } from "lucide-react";
 import api from "../../services/api";
 import { toast } from "sonner";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 const emptyProduct = {
   name: "", sku: "", description: "", price: "", sale_price: "",
@@ -145,7 +146,7 @@ export function AdminProducts() {
                   <tr key={product.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <img src={product.image} alt={product.name} className="w-12 h-12 rounded object-cover" />
+                        <img src={resolveImageUrl(product.image)} alt={product.name} className="w-12 h-12 rounded object-cover" />
                         <div>
                           <p className="font-medium text-sm">{product.name}</p>
                           <p className="text-xs text-gray-500">{product.brand}</p>

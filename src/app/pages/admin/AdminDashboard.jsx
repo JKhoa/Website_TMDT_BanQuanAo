@@ -3,6 +3,7 @@ import { DollarSign, ShoppingCart, Package, Users, TrendingUp, AlertTriangle } f
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import api from "../../services/api";
 import { Link } from "react-router";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 export function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -154,7 +155,7 @@ export function AdminDashboard() {
             {stats.lowStockProducts?.map((product) => (
               <div key={product.id} className="flex items-center justify-between py-3 border-b last:border-0">
                 <div className="flex items-center gap-3">
-                  <img src={product.image} alt={product.name} className="w-10 h-10 rounded object-cover" />
+                  <img src={resolveImageUrl(product.image)} alt={product.name} className="w-10 h-10 rounded object-cover" />
                   <div>
                     <p className="font-medium text-sm">{product.name}</p>
                     <p className="text-xs text-gray-500">SKU: {product.sku}</p>

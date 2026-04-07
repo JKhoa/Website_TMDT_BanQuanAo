@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Minus, Plus, X, ShoppingBag, Tag } from "lucide-react";
 import { useCart } from "../contexts/CartContext";
 import { useState } from "react";
+import { resolveImageUrl } from "../utils/imageUrl";
 
 export function CartPage() {
   const { cart, updateQuantity, removeFromCart, getCartTotal } = useCart();
@@ -54,7 +55,7 @@ export function CartPage() {
                   {/* Image */}
                   <Link to={`/product/${item.id}`} className="flex-shrink-0">
                     <img
-                      src={item.image}
+                      src={resolveImageUrl(item.image)}
                       alt={item.name}
                       className="w-24 h-24 object-cover rounded"
                     />
