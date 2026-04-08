@@ -146,18 +146,18 @@ export const router = createBrowserRouter(
             { path: "addresses", element: <SuspenseWrapper><AddressesPage /></SuspenseWrapper> }
           ]
         },
+        {
+          path: "admin",
+          element: <SuspenseWrapper><AdminLayout /></SuspenseWrapper>,
+          errorElement: <RouteErrorFallback />,
+          children: [
+            { index: true, element: <SuspenseWrapper><AdminDashboard /></SuspenseWrapper> },
+            { path: "products", element: <SuspenseWrapper><AdminProducts /></SuspenseWrapper> },
+            { path: "orders", element: <SuspenseWrapper><AdminOrders /></SuspenseWrapper> },
+            { path: "customers", element: <SuspenseWrapper><AdminCustomers /></SuspenseWrapper> }
+          ]
+        },
         { path: "*", element: <SuspenseWrapper><NotFoundPage /></SuspenseWrapper> }
-      ]
-    },
-    {
-      path: "/admin",
-      element: <SuspenseWrapper><AdminLayout /></SuspenseWrapper>,
-      errorElement: <RouteErrorFallback />,
-      children: [
-        { index: true, element: <SuspenseWrapper><AdminDashboard /></SuspenseWrapper> },
-        { path: "products", element: <SuspenseWrapper><AdminProducts /></SuspenseWrapper> },
-        { path: "orders", element: <SuspenseWrapper><AdminOrders /></SuspenseWrapper> },
-        { path: "customers", element: <SuspenseWrapper><AdminCustomers /></SuspenseWrapper> }
       ]
     }
   ],
