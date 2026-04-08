@@ -72,6 +72,11 @@ class ApiService {
   }
 
   mockRequest(method, endpoint, body = null) {
+    const registeredUsers = (() => {
+      const raw = localStorage.getItem('registeredUsers');
+      return raw ? JSON.parse(raw) : {};
+    })();
+
     const user = (() => {
       const raw = localStorage.getItem('user');
       return raw ? JSON.parse(raw) : null;
@@ -84,6 +89,65 @@ class ApiService {
     if (endpoint === '/auth/me' && method === 'GET') {
       if (!user) throw new Error('Bạn chưa đăng nhập');
       return { user };
+    }
+    if (endpoint === '/auth/login' && method === 'POST') {
+      const email = (body?.email || '').trim().toLowerCase();
+      if (!email) throw new Error('Email không hợp lệ');
+
+      const isKnownAdmin = email === 'admin@fashionshop.vn';
+      const existing = registeredUsers[email];
+      const nextUser = existing
+        ? {
+            ...existing,
+            role: isKnownAdmin ? 'admin' : existing.role || 'customer',
+            isAdmin: isKnownAdmin
+          }
+        : {
+            id: Date.now(),
+            email,
+            name: email.split('@')[0],
+            phone: '',
+            role: isKnownAdmin ? 'admin' : 'customer',
+            isAdmin: isKnownAdmin,
+            addresses: []
+          };
+
+      registeredUsers[email] = nextUser;
+      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+      return {
+        user: nextUser,
+        accessToken: 'mock_access_token',
+        refreshToken: 'mock_refresh_token'
+      };
+    }
+    if (endpoint === '/auth/register' && method === 'POST') {
+      const email = (body?.email || '').trim().toLowerCase();
+      const name = (body?.name || '').trim();
+      if (!email) throw new Error('Email không hợp lệ');
+
+      if (registeredUsers[email]) {
+        throw new Error('Email đã tồn tại');
+      }
+
+      const nextUser = {
+        id: Date.now(),
+        email,
+        name: name || email.split('@')[0],
+        phone: '',
+        role: 'customer',
+        isAdmin: false,
+        addresses: []
+      };
+
+      registeredUsers[email] = nextUser;
+      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+
+      return {
+        user: nextUser,
+        accessToken: 'mock_access_token',
+        refreshToken: 'mock_refresh_token'
+      };
     }
     if (endpoint === '/auth/logout' && method === 'POST') {
       return { success: true };
