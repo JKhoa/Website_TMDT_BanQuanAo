@@ -5,8 +5,8 @@ import react from '@vitejs/plugin-react'
 
 const repoName = 'Website_TMDT_BanQuanAo'
 
-export default defineConfig({
-  base: process.env.GITHUB_ACTIONS ? `/${repoName}/` : '/',
+export default defineConfig(({ command }) => ({
+  base: command === 'serve' ? '/' : `/${repoName}/`,
   plugins: [
     // The React and Tailwind plugins are both required for Make, even if
     // Tailwind is not being actively used – do not remove them
@@ -22,4 +22,4 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
-})
+}))
