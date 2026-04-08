@@ -24,18 +24,29 @@ const PORT = process.env.PORT || 3001;
 // Security
 app.use(helmet());
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
+const defaultAllowedOrigins = [
   'http://localhost:5173',
-  'http://localhost:5174'
-].filter(Boolean);
+  'http://localhost:5174',
+  'https://jkhoa.github.io'
+];
+
+const envOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.FRONTEND_URLS || '').split(',')
+]
+  .map((origin) => origin?.trim())
+  .filter(Boolean);
+
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...envOrigins])]
+  .map((origin) => origin.replace(/\/$/, ''));
 
 app.use(cors({
   origin: (origin, callback) => {
     // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    if (!allowedOrigins.includes(normalizedOrigin)) {
+      const msg = `Origin ${origin} không nằm trong danh sách CORS được phép.`;
       return callback(new Error(msg), false);
     }
     return callback(null, true);
