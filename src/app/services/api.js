@@ -1,7 +1,9 @@
 const configuredApiBase = (import.meta.env.VITE_API_BASE_URL || '').trim();
 const isGithubPages =
   typeof window !== 'undefined' && window.location.hostname.endsWith('github.io');
-const shouldUseMockMode = import.meta.env.PROD && isGithubPages && !configuredApiBase;
+const isLocalApiBase = /localhost|127\.0\.0\.1/i.test(configuredApiBase);
+const shouldUseMockMode =
+  import.meta.env.PROD && isGithubPages && (!configuredApiBase || isLocalApiBase);
 const API_BASE = (configuredApiBase || 'http://localhost:3001/api').replace(/\/$/, '');
 
 class ApiService {
