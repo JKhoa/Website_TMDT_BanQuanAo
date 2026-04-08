@@ -8,6 +8,8 @@ export function AccountPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
+  const isAdminUser = user?.role === "admin" || user?.isAdmin === true || user?.email === "admin@fashionshop.vn";
+
   if (!user) {
     navigate("/login");
     return null;
@@ -20,9 +22,8 @@ export function AccountPage() {
 
   const menuItems = [
     { path: "/account", label: "Thông tin tài khoản", icon: User },
-    user?.role === "admin" 
-      ? { path: "/admin", label: "Admin", icon: LayoutDashboard }
-      : { path: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
+    ...(isAdminUser ? [{ path: "/admin", label: "Admin", icon: LayoutDashboard }] : []),
+    { path: "/account/orders", label: "Đơn hàng của tôi", icon: Package },
     { path: "/account/wishlist", label: "Yêu thích", icon: Heart },
     { path: "/account/addresses", label: "Địa chỉ", icon: MapPin }
   ];

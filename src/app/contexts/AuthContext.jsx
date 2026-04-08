@@ -102,13 +102,28 @@ export function AuthProvider({ children }) {
 
   // Mock fallback functions (when backend is down)
   const mockLogin = (email, password) => {
+    const isKnownAdmin = email === "admin@fashionshop.vn";
     const saved = localStorage.getItem("registeredUsers");
     const registeredUsers = saved ? JSON.parse(saved) : {};
     if (registeredUsers[email]) {
-      setUser(registeredUsers[email]);
-      return { success: true, user: registeredUsers[email] };
+      const existingUser = registeredUsers[email];
+      const normalizedUser = isKnownAdmin
+        ? { ...existingUser, role: "admin", isAdmin: true }
+        : existingUser;
+      registeredUsers[email] = normalizedUser;
+      localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers));
+      setUser(normalizedUser);
+      return { success: true, user: normalizedUser };
     }
-    const mockUser = { id: Date.now(), email, name: email.split("@")[0], phone: "", role: "customer", addresses: [] };
+    const mockUser = {
+      id: Date.now(),
+      email,
+      name: email.split("@")[0],
+      phone: "",
+      role: isKnownAdmin ? "admin" : "customer",
+      isAdmin: isKnownAdmin,
+      addresses: []
+    };
     setUser(mockUser);
     return { success: true, user: mockUser };
   };

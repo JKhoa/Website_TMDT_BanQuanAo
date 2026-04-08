@@ -18,15 +18,16 @@ export function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isAdminUser = user?.role === "admin" || user?.isAdmin === true || user?.email === "admin@fashionshop.vn";
 
   // Guard: redirect non-admin users
   useEffect(() => {
-    if (!user || user.role !== "admin") {
+    if (!user || !isAdminUser) {
       navigate("/login");
     }
-  }, [user, navigate]);
+  }, [user, isAdminUser, navigate]);
 
-  if (!user || user.role !== "admin") return null;
+  if (!user || !isAdminUser) return null;
 
   const handleLogout = () => {
     logout();
