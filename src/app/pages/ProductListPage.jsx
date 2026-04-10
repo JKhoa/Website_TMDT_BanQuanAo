@@ -126,11 +126,13 @@ export function ProductListPage() {
     return result;
   }, [apiProducts, productsSource, selectedCategory, selectedSubcategory, sortBy, saleOnly, minPrice, maxPrice]);
 
-  // Pagination
-  const totalItems = apiProducts !== null ? apiTotal : filteredProducts.length;
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  // Pagination — check if we're actually using API data (not just that it responded)
+  const usingApiData = apiProducts && apiProducts.length > 0;
+  const totalPages = usingApiData
+    ? Math.ceil(apiTotal / ITEMS_PER_PAGE)
+    : Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   
-  const paginatedProducts = (apiProducts !== null)
+  const paginatedProducts = usingApiData
     ? filteredProducts // API already paginated
     : filteredProducts.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -157,7 +159,7 @@ export function ProductListPage() {
           <h1 className="text-3xl font-bold">
             {saleOnly ? "🔥 Sản Phẩm Giảm Giá" : selectedCategory ? categoryName[selectedCategory] : "Tất Cả Sản Phẩm"}
           </h1>
-          <p className="text-gray-600 mt-1">{totalItems} sản phẩm</p>
+          <p className="text-gray-600 mt-1">{usingApiData ? apiTotal : filteredProducts.length} sản phẩm</p>
         </div>
         <button
           className="lg:hidden flex items-center gap-2 px-4 py-2 border rounded-lg"

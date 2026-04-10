@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Search, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, X, AlertTriangle } from "lucide-react";
 import api from "../../services/api";
 import { toast } from "sonner";
 import { resolveImageUrl } from "../../utils/imageUrl";
+import { products as localProducts } from "../../data/products";
 
 const emptyProduct = {
   name: "", sku: "", description: "", price: "", sale_price: "",
@@ -10,6 +11,19 @@ const emptyProduct = {
   image: "", sizes: "S,M,L,XL", colors: "Đen,Trắng",
   tags: "", is_active: true, is_best_seller: false, is_new_arrival: false, is_flash_sale: false
 };
+
+// Normalize local products (camelCase → snake_case) for admin table consistency
+function normalizeProduct(p) {
+  return {
+    ...p,
+    sale_price: p.sale_price ?? p.salePrice ?? null,
+    is_active: p.is_active ?? true,
+    is_best_seller: p.is_best_seller ?? p.isBestSeller ?? false,
+    is_new_arrival: p.is_new_arrival ?? p.isNewArrival ?? false,
+    is_flash_sale: p.is_flash_sale ?? p.isFlashSale ?? false,
+    review_count: p.review_count ?? p.reviews ?? 0,
+  };
+}
 
 export function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -19,9 +33,9 @@ export function AdminProducts() {
   const [showModal, setShowModal] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
   const [formData, setFormData] = useState(emptyProduct);
-
   const [error, setError] = useState(null);
-  
+  const [usingLocalData, setUsingLocalData] = useState(false);
+
   useEffect(() => { loadProducts(); }, [pagination.page]);
 
   const loadProducts = async () => {
@@ -30,15 +44,53 @@ export function AdminProducts() {
       setError(null);
       const params = { page: pagination.page, limit: 10, include_inactive: 'true' };
       if (search) params.search = search;
+
       const res = await api.getProducts(params);
-      setProducts(res.products || []);
-      if (res.pagination) setPagination(res.pagination);
+      const apiProducts = res.products || [];
+
+      if (apiProducts.length > 0) {
+        // Backend has products — use them
+        setProducts(apiProducts);
+        if (res.pagination) setPagination(res.pagination);
+        setUsingLocalData(false);
+      } else {
+        // Backend returned empty — fallback to local products
+        loadLocalProducts();
+      }
     } catch (err) {
+      // API error — fallback to local products
       setError(err.message);
-      toast.error(err.message);
+      loadLocalProducts();
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadLocalProducts = () => {
+    let filtered = localProducts.map(normalizeProduct);
+
+    // Apply search filter
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.sku.toLowerCase().includes(q) ||
+          (p.brand || "").toLowerCase().includes(q)
+      );
+    }
+
+    // Paginate
+    const page = pagination.page;
+    const limit = 10;
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / limit);
+    const start = (page - 1) * limit;
+    const paged = filtered.slice(start, start + limit);
+
+    setProducts(paged);
+    setPagination({ total, page, limit, totalPages });
+    setUsingLocalData(true);
   };
 
   const handleSearch = (e) => {
@@ -61,7 +113,7 @@ export function AdminProducts() {
       colors: Array.isArray(product.colors) ? product.colors.join(",") : product.colors || "",
       tags: Array.isArray(product.tags) ? product.tags.join(",") : product.tags || "",
       images: Array.isArray(product.images) ? product.images.join(",") : product.images || "",
-      sale_price: product.sale_price || ""
+      sale_price: product.sale_price || product.salePrice || ""
     });
     setShowModal(true);
   };
@@ -89,8 +141,8 @@ export function AdminProducts() {
       }
       setShowModal(false);
       loadProducts();
-    } catch (error) {
-      toast.error(error.message);
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
@@ -100,13 +152,32 @@ export function AdminProducts() {
       await api.deleteProduct(product.id);
       toast.success("Xóa sản phẩm thành công");
       loadProducts();
-    } catch (error) {
-      toast.error(error.message);
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
   return (
     <div>
+      {/* Local data banner */}
+      {usingLocalData && (
+        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4">
+          <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-amber-800">
+              Đang hiển thị dữ liệu local ({pagination.total} sản phẩm)
+            </p>
+            <p className="text-xs text-amber-600">
+              {error
+                ? `Không kết nối được backend: ${error}. `
+                : "Database chưa có sản phẩm. "}
+              Để quản lý sản phẩm qua API, hãy chạy <code className="bg-amber-100 px-1 rounded">npm run seed</code> trong thư mục <code className="bg-amber-100 px-1 rounded">server</code>.
+            </p>
+          </div>
+          <button onClick={loadProducts} className="text-sm text-amber-700 hover:underline whitespace-nowrap">Thử lại</button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <form onSubmit={handleSearch} className="flex gap-2 flex-1 max-w-md">
@@ -145,18 +216,10 @@ export function AdminProducts() {
                 <tr><td colSpan={6} className="text-center py-12"><div className="animate-spin w-6 h-6 border-4 border-orange-500 border-t-transparent rounded-full mx-auto" /></td></tr>
               ) : products.length === 0 ? (
                 <tr><td colSpan={6} className="text-center py-12">
-                  {error ? (
-                    <div className="text-red-500">
-                      <p className="font-semibold mb-2">Không thể tải sản phẩm</p>
-                      <p className="text-sm text-gray-500 mb-3">{error}</p>
-                      <button onClick={loadProducts} className="text-sm text-orange-500 hover:underline">Thử lại</button>
-                    </div>
-                  ) : (
-                    <div className="text-gray-500">
-                      <p className="mb-2">Không có sản phẩm nào</p>
-                      <p className="text-sm text-gray-400">Hãy thêm sản phẩm mới hoặc chạy <code className="bg-gray-100 px-1 rounded">npm run seed</code> trong thư mục server</p>
-                    </div>
-                  )}
+                  <div className="text-gray-500">
+                    <p className="mb-2">Không có sản phẩm nào</p>
+                    <p className="text-sm text-gray-400">Hãy thêm sản phẩm mới hoặc chạy <code className="bg-gray-100 px-1 rounded">npm run seed</code> trong thư mục server</p>
+                  </div>
                 </td></tr>
               ) : (
                 products.map((product) => (
@@ -172,9 +235,9 @@ export function AdminProducts() {
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">{product.sku}</td>
                     <td className="px-4 py-3 text-right">
-                      {product.sale_price ? (
+                      {(product.sale_price || product.salePrice) ? (
                         <div>
-                          <span className="text-orange-500 font-semibold">{Number(product.sale_price).toLocaleString("vi-VN")}đ</span>
+                          <span className="text-orange-500 font-semibold">{Number(product.sale_price || product.salePrice).toLocaleString("vi-VN")}đ</span>
                           <br />
                           <span className="text-xs text-gray-400 line-through">{Number(product.price).toLocaleString("vi-VN")}đ</span>
                         </div>
@@ -188,8 +251,8 @@ export function AdminProducts() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`text-xs px-2 py-1 rounded-full ${product.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                        {product.is_active ? "Hoạt động" : "Ẩn"}
+                      <span className={`text-xs px-2 py-1 rounded-full ${product.is_active !== false ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                        {product.is_active !== false ? "Hoạt động" : "Ẩn"}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
