@@ -1,9 +1,10 @@
 import { Link } from "react-router";
 import { ChevronRight, Clock } from "lucide-react";
 import { ProductCard } from "../components/ProductCard";
-import { products, categories } from "../data/products";
+import { products as localProducts, categories } from "../data/products";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import api from "../services/api";
 
 // Get flash sale end time from localStorage or set new one
 function getFlashSaleEndTime() {
@@ -45,9 +46,19 @@ export function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
-  const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 8);
-  const newArrivals = products.filter((p) => p.isNewArrival).slice(0, 8);
-  const flashSaleProducts = products.filter((p) => p.isFlashSale).slice(0, 4);
+  const [bestSellers, setBestSellers] = useState(localProducts.filter((p) => p.isBestSeller).slice(0, 8));
+  const [newArrivals, setNewArrivals] = useState(localProducts.filter((p) => p.isNewArrival).slice(0, 8));
+  const [flashSaleProducts] = useState(localProducts.filter((p) => p.isFlashSale).slice(0, 4));
+
+  // Try to fetch from API
+  useEffect(() => {
+    api.getProducts({ sort: 'bestseller', limit: 8 })
+      .then((res) => { if (res.products?.length) setBestSellers(res.products); })
+      .catch(() => {});
+    api.getProducts({ sort: 'newest', limit: 8 })
+      .then((res) => { if (res.products?.length) setNewArrivals(res.products); })
+      .catch(() => {});
+  }, []);
 
   const handleNewsletter = (e) => {
     e.preventDefault();
@@ -64,6 +75,7 @@ export function HomePage() {
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200"
+            onError={(e) => { e.target.style.display = 'none'; }}
             alt="Hero Banner"
             className="w-full h-full object-cover opacity-90"
           />

@@ -3,15 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
+  const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
-  }, []);
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
@@ -19,17 +14,33 @@ export function CartProvider({ children }) {
   }, [cart]);
 
   const addToCart = (product, size, color, quantity = 1) => {
+    const maxStock = product.stock !== undefined ? product.stock : 99;
+    
     setCart((prevCart) => {
       const existingItem = prevCart.find(
         (item) => item.id === product.id && item.size === size && item.color === color
       );
 
       if (existingItem) {
+        const newQuantity = existingItem.quantity + quantity;
+        if (newQuantity > maxStock) {
+          alert(`Xin lỗi, sản phẩm này chỉ còn ${maxStock} sản phẩm trong kho.`);
+          return prevCart.map((item) =>
+            item.id === product.id && item.size === size && item.color === color
+              ? { ...item, quantity: maxStock }
+              : item
+          );
+        }
         return prevCart.map((item) =>
           item.id === product.id && item.size === size && item.color === color
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: newQuantity }
             : item
         );
+      }
+
+      if (quantity > maxStock) {
+        alert(`Xin lỗi, sản phẩm này chỉ còn ${maxStock} sản phẩm trong kho.`);
+        return [...prevCart, { ...product, size, color, quantity: maxStock }];
       }
 
       return [...prevCart, { ...product, size, color, quantity }];
@@ -51,11 +62,18 @@ export function CartProvider({ children }) {
     }
 
     setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === productId && item.size === size && item.color === color
-          ? { ...item, quantity }
-          : item
-      )
+      prevCart.map((item) => {
+        if (item.id === productId && item.size === size && item.color === color) {
+          // Check stock before updating quantity
+          const maxStock = item.stock !== undefined ? item.stock : 99; // Fallback to 99 if stock is undefined
+          const validQuantity = Math.min(quantity, maxStock);
+          if (quantity > maxStock) {
+            alert(`Xin lỗi, sản phẩm này chỉ còn ${maxStock} sản phẩm trong kho.`);
+          }
+          return { ...item, quantity: validQuantity };
+        }
+        return item;
+      })
     );
   };
 

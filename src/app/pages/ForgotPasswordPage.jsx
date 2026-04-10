@@ -2,20 +2,31 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { ArrowLeft, Mail } from "lucide-react";
 import { toast } from "sonner";
+import api from "../services/api";
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
       toast.error("Vui lòng nhập email");
       return;
     }
-    // Mock sending reset email
-    setSent(true);
-    toast.success("Đã gửi email khôi phục mật khẩu!");
+    setLoading(true);
+    try {
+      await api.forgotPassword(email);
+      setSent(true);
+      toast.success("Đã gửi email khôi phục mật khẩu!");
+    } catch (error) {
+      // Still show success to not reveal if email exists (security best practice)
+      setSent(true);
+      toast.success("Nếu email tồn tại, chúng tôi đã gửi hướng dẫn khôi phục.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

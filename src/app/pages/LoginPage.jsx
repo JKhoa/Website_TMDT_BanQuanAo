@@ -196,12 +196,18 @@ export function LoginPage() {
             </div>
 
             <div className="mt-6 space-y-3">
-              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
+              <button
+                onClick={() => toast.info("Tính năng đăng nhập Google đang được phát triển")}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 border rounded-lg hover:bg-gray-50 transition-colors opacity-75"
+              >
+                <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" onError={(e) => { e.target.style.display = 'none'; }} />
                 <span>Tiếp tục với Google</span>
               </button>
-              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                <img src="https://www.facebook.com/favicon.ico" alt="Facebook" className="w-5 h-5" />
+              <button
+                onClick={() => toast.info("Tính năng đăng nhập Facebook đang được phát triển")}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 border rounded-lg hover:bg-gray-50 transition-colors opacity-75"
+              >
+                <img src="https://www.facebook.com/favicon.ico" alt="Facebook" className="w-5 h-5" onError={(e) => { e.target.style.display = 'none'; }} />
                 <span>Tiếp tục với Facebook</span>
               </button>
             </div>

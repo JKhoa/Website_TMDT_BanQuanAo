@@ -1,14 +1,18 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams, Link } from "react-router";
 import { SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { products, categories } from "../data/products";
+import { products as localProducts, categories } from "../data/products";
 import { ProductCard } from "../components/ProductCard";
+import api from "../services/api";
 
 const ITEMS_PER_PAGE = 12;
 
 export function ProductListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
+  const [apiProducts, setApiProducts] = useState(null); // null = not loaded, [] = loaded empty
+  const [apiTotal, setApiTotal] = useState(0); // Stores total products count from API
+  const [loadingApi, setLoadingApi] = useState(true);
 
   // Read state from URL params
   const selectedCategory = searchParams.get("category") || "";
@@ -20,6 +24,43 @@ export function ProductListPage() {
   // Price range from URL
   const minPrice = parseInt(searchParams.get("minPrice") || "0");
   const maxPrice = parseInt(searchParams.get("maxPrice") || "10000000");
+
+  // Fetch products from API
+  useEffect(() => {
+    let cancelled = false;
+    setLoadingApi(true);
+    const params = {
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+      sort: sortBy
+    };
+    if (selectedCategory) params.category = selectedCategory;
+    if (selectedSubcategory) params.subcategory = selectedSubcategory;
+    if (saleOnly) params.sale = "true";
+    if (minPrice > 0) params.minPrice = minPrice;
+    if (maxPrice < 10000000) params.maxPrice = maxPrice;
+
+    api.getProducts(params)
+      .then((res) => {
+        if (!cancelled) {
+          if (res.products && res.products.length > 0) {
+            setApiProducts(res.products);
+          } else {
+            setApiProducts([]);
+          }
+          if (res.pagination) {
+            setApiTotal(res.pagination.total || 0);
+          }
+        }
+      })
+      .catch(() => {
+        // Backend unavailable, will use local data
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingApi(false);
+      });
+    return () => { cancelled = true; };
+  }, [selectedCategory, selectedSubcategory, sortBy, currentPage, saleOnly, minPrice, maxPrice]);
 
   const updateParam = useCallback((key, value) => {
     setSearchParams((prev) => {
@@ -37,31 +78,32 @@ export function ProductListPage() {
     });
   }, [setSearchParams]);
 
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
+  // Use API products if available, otherwise fallback to local
+  const productsSource = apiProducts && apiProducts.length > 0 ? apiProducts : localProducts;
 
-    // Category filter
+  const filteredProducts = useMemo(() => {
+    // If products came from API, they're already filtered server-side
+    if (apiProducts && apiProducts.length > 0) {
+      return apiProducts;
+    }
+
+    // Fallback: local filtering
+    let result = [...productsSource];
+
     if (selectedCategory) {
       result = result.filter((p) => p.category === selectedCategory);
     }
-
-    // Subcategory filter
     if (selectedSubcategory) {
       result = result.filter((p) => p.subcategory === selectedSubcategory);
     }
-
-    // Sale filter
     if (saleOnly) {
       result = result.filter((p) => p.salePrice);
     }
-
-    // Price filter
     result = result.filter((p) => {
       const price = p.salePrice || p.price;
       return price >= minPrice && price <= maxPrice;
     });
 
-    // Sort
     switch (sortBy) {
       case "price-asc":
         result.sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price));
@@ -82,14 +124,18 @@ export function ProductListPage() {
     }
 
     return result;
-  }, [selectedCategory, selectedSubcategory, sortBy, saleOnly, minPrice, maxPrice]);
+  }, [apiProducts, productsSource, selectedCategory, selectedSubcategory, sortBy, saleOnly, minPrice, maxPrice]);
 
   // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const totalItems = apiProducts !== null ? apiTotal : filteredProducts.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  
+  const paginatedProducts = (apiProducts !== null)
+    ? filteredProducts // API already paginated
+    : filteredProducts.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+      );
 
   const currentCategory = categories.find((c) => c.id === selectedCategory);
   const categoryName = { nam: "Nam", nu: "Nữ", "tre-em": "Trẻ em", "phu-kien": "Phụ kiện" };
@@ -111,7 +157,7 @@ export function ProductListPage() {
           <h1 className="text-3xl font-bold">
             {saleOnly ? "🔥 Sản Phẩm Giảm Giá" : selectedCategory ? categoryName[selectedCategory] : "Tất Cả Sản Phẩm"}
           </h1>
-          <p className="text-gray-600 mt-1">{filteredProducts.length} sản phẩm</p>
+          <p className="text-gray-600 mt-1">{totalItems} sản phẩm</p>
         </div>
         <button
           className="lg:hidden flex items-center gap-2 px-4 py-2 border rounded-lg"
@@ -252,7 +298,11 @@ export function ProductListPage() {
             </div>
           </div>
 
-          {paginatedProducts.length > 0 ? (
+          {loadingApi ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" />
+            </div>
+          ) : paginatedProducts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {paginatedProducts.map((product) => (

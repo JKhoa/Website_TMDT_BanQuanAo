@@ -13,10 +13,12 @@ router.get('/', async (req, res) => {
   try {
     const {
       page = 1, limit = 12, category, subcategory, search,
-      sort = 'newest', minPrice, maxPrice, sale, brand
+      sort = 'newest', minPrice, maxPrice, sale, brand,
+      include_inactive
     } = req.query;
 
-    const where = { is_active: true };
+    // By default only show active products; admin can pass include_inactive=true
+    const where = include_inactive === 'true' ? {} : { is_active: true };
 
     if (category) where.category = category;
     if (subcategory) where.subcategory = subcategory;

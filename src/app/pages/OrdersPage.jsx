@@ -6,9 +6,9 @@ import { resolveImageUrl } from "../utils/imageUrl";
 
 const statusMap = {
   pending: { label: "Chờ xác nhận", color: "bg-yellow-100 text-yellow-800" },
-  processing: { label: "Đang xử lý", color: "bg-blue-100 text-blue-800" },
+  confirmed: { label: "Đã xác nhận", color: "bg-blue-100 text-blue-800" },
   shipping: { label: "Đang giao hàng", color: "bg-purple-100 text-purple-800" },
-  delivered: { label: "Đã giao", color: "bg-green-100 text-green-800" },
+  completed: { label: "Đã giao", color: "bg-green-100 text-green-800" },
   cancelled: { label: "Đã hủy", color: "bg-red-100 text-red-800" }
 };
 
@@ -58,7 +58,7 @@ export function OrdersPage() {
                         </span>
                       </p>
                       <p className="text-sm text-gray-600">
-                        {new Date(order.date).toLocaleDateString("vi-VN")} • {order.items?.length || 0} sản phẩm
+                        {new Date(order.createdAt || order.created_at).toLocaleDateString("vi-VN")} • {order.items?.length || 0} sản phẩm
                       </p>
                     </div>
                   </div>

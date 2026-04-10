@@ -218,3 +218,33 @@
 {"level":"debug","message":"GET /api/admin/revenue?period=daily&months=1","service":"fashionshop-api","timestamp":"2026-04-06 16:08:07"}
 {"level":"debug","message":"GET /api/admin/dashboard","service":"fashionshop-api","timestamp":"2026-04-06 16:08:17"}
 {"level":"debug","message":"GET /api/admin/revenue?period=daily&months=1","service":"fashionshop-api","timestamp":"2026-04-06 16:08:17"}
+{"level":"info","message":"✅ Database connected","service":"fashionshop-api","timestamp":"2026-04-08 12:29:43"}
+{"level":"info","message":"✅ Database synced","service":"fashionshop-api","timestamp":"2026-04-08 12:29:43"}
+{"level":"info","message":"🚀 Server running at http://localhost:3001","service":"fashionshop-api","timestamp":"2026-04-08 12:29:43"}
+{"level":"info","message":"📡 API: http://localhost:3001/api","service":"fashionshop-api","timestamp":"2026-04-08 12:29:43"}
+{"level":"info","message":"✅ Database connected","service":"fashionshop-api","timestamp":"2026-04-08 12:33:00"}
+{"level":"info","message":"✅ Database synced","service":"fashionshop-api","timestamp":"2026-04-08 12:33:00"}
+{"level":"info","message":"🚀 Server running at http://localhost:3001","service":"fashionshop-api","timestamp":"2026-04-08 12:33:00"}
+{"level":"info","message":"📡 API: http://localhost:3001/api","service":"fashionshop-api","timestamp":"2026-04-08 12:33:00"}
+{"level":"debug","message":"GET /api/health","service":"fashionshop-api","timestamp":"2026-04-08 12:34:45"}
+{"level":"debug","message":"GET /favicon.ico","service":"fashionshop-api","timestamp":"2026-04-08 12:34:45"}
+{"level":"debug","message":"GET /","service":"fashionshop-api","timestamp":"2026-04-08 12:34:58"}
+{"level":"info","message":"✅ Database connected","service":"fashionshop-api","timestamp":"2026-04-08 12:36:58"}
+{"level":"info","message":"✅ Database synced","service":"fashionshop-api","timestamp":"2026-04-08 12:36:58"}
+{"level":"info","message":"🚀 Server running at http://localhost:3001","service":"fashionshop-api","timestamp":"2026-04-08 12:36:58"}
+{"level":"info","message":"📡 API: http://localhost:3001/api","service":"fashionshop-api","timestamp":"2026-04-08 12:36:58"}
+{"level":"info","message":"✅ Database connected","service":"fashionshop-api","timestamp":"2026-04-10 08:41:06"}
+{"level":"info","message":"✅ Database synced","service":"fashionshop-api","timestamp":"2026-04-10 08:41:06"}
+{"level":"info","message":"🚀 Server running at http://localhost:3001","service":"fashionshop-api","timestamp":"2026-04-10 08:41:06"}
+{"level":"info","message":"📡 API: http://localhost:3001/api","service":"fashionshop-api","timestamp":"2026-04-10 08:41:06"}
+{"level":"info","message":"✅ Database connected","service":"fashionshop-api","timestamp":"2026-04-10 08:46:28"}
+{"level":"info","message":"✅ Database synced","service":"fashionshop-api","timestamp":"2026-04-10 08:46:28"}
+{"level":"info","message":"🚀 Server running at http://localhost:3001","service":"fashionshop-api","timestamp":"2026-04-10 08:46:28"}
+{"level":"info","message":"📡 API: http://localhost:3001/api","service":"fashionshop-api","timestamp":"2026-04-10 08:46:28"}
+{"level":"debug","message":"POST /api/auth/login","service":"fashionshop-api","timestamp":"2026-04-10 08:47:17"}
+{"level":"info","message":"User logged in: admin@fashionshop.vn","service":"fashionshop-api","timestamp":"2026-04-10 08:47:17"}
+{"level":"debug","message":"GET /api/admin/dashboard","service":"fashionshop-api","timestamp":"2026-04-10 08:47:17"}
+{"level":"debug","message":"GET /api/admin/revenue?period=daily&months=1","service":"fashionshop-api","timestamp":"2026-04-10 08:47:18"}
+{"level":"debug","message":"POST /api/auth/login","service":"fashionshop-api","timestamp":"2026-04-10 08:47:22"}
+{"level":"info","message":"User logged in: customer@example.com","service":"fashionshop-api","timestamp":"2026-04-10 08:47:23"}
+{"level":"debug","message":"GET /api/admin/dashboard","service":"fashionshop-api","timestamp":"2026-04-10 08:47:23"}

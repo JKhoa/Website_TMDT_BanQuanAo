@@ -10,6 +10,10 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
   const { user, createOrder } = useAuth();
+  
+  // Need to get voucher/discount info correctly or let user type here
+  const [voucher, setVoucher] = useState("");
+  const [discount, setDiscount] = useState(0);
 
   const [step, setStep] = useState(1);
   const [shippingInfo, setShippingInfo] = useState({
@@ -24,8 +28,23 @@ export function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
   const subtotal = getCartTotal();
+  // Checkout applying discount
   const shippingFee = shippingMethod === "express" ? 50000 : subtotal > 500000 ? 0 : 30000;
-  const total = subtotal + shippingFee;
+  const total = subtotal - discount + shippingFee;
+
+  const applyVoucher = () => {
+    if (!voucher.trim()) {
+      toast.error("Vui lòng nhập mã giảm giá");
+      return;
+    }
+    if (voucher.toUpperCase() === "SALE10") {
+      setDiscount(subtotal * 0.1);
+      toast.success("Áp dụng mã giảm giá thành công! Giảm 10%");
+    } else {
+      setDiscount(0);
+      toast.error("Mã giảm giá không hợp lệ hoặc đã hết hạn");
+    }
+  };
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -72,21 +91,30 @@ export function CheckoutPage() {
     setStep(4);
   };
 
-  const handleConfirmOrder = () => {
-    const order = {
-      items: cart,
-      shippingInfo,
-      shippingMethod,
-      paymentMethod,
-      subtotal,
-      shippingFee,
-      total
-    };
+  const [submitting, setSubmitting] = useState(false);
 
-    const newOrder = createOrder(order);
-    clearCart();
-    toast.success("Đặt hàng thành công!");
-    navigate(`/order-success?orderId=${newOrder.id}`);
+  const handleConfirmOrder = async () => {
+    setSubmitting(true);
+    try {
+      const order = {
+        items: cart,
+        shippingInfo,
+        shippingMethod,
+        paymentMethod,
+        subtotal,
+        shippingFee,
+        total
+      };
+
+      const newOrder = await createOrder(order);
+      clearCart();
+      toast.success("Đặt hàng thành công!");
+      navigate(`/order-success?orderId=${newOrder.id}`);
+    } catch (error) {
+      toast.error(error.message || "Đặt hàng thất bại. Vui lòng thử lại.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -299,9 +327,10 @@ export function CheckoutPage() {
               </div>
               <button
                 onClick={handleConfirmOrder}
-                className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors"
+                disabled={submitting}
+                className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Xác nhận đặt hàng
+                {submitting ? "Đang xử lý..." : "Xác nhận đặt hàng"}
               </button>
             </div>
           )}
@@ -311,11 +340,38 @@ export function CheckoutPage() {
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
             <h2 className="text-xl font-bold mb-4">Tóm tắt đơn hàng</h2>
+            
+            {/* Voucher input inside Checkout */}
+            <div className="mb-4">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={voucher}
+                  onChange={(e) => setVoucher(e.target.value)}
+                  placeholder="Nhập mã giảm giá (SALE10)"
+                  className="flex-1 px-3 py-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-orange-500"
+                />
+                <button
+                  type="button"
+                  onClick={applyVoucher}
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors"
+                >
+                  Áp dụng
+                </button>
+              </div>
+            </div>
+
             <div className="space-y-3 mb-6 pb-6 border-b">
               <div className="flex justify-between">
                 <span className="text-gray-600">Tạm tính</span>
                 <span>{subtotal.toLocaleString("vi-VN")}đ</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Giảm giá</span>
+                  <span>-{discount.toLocaleString("vi-VN")}đ</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-gray-600">Phí vận chuyển</span>
                 <span>{shippingFee === 0 ? "Miễn phí" : `${shippingFee.toLocaleString("vi-VN")}đ`}</span>

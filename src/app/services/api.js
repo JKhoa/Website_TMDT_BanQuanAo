@@ -252,6 +252,8 @@ class ApiService {
   getMe() { return this.request('GET', '/auth/me'); }
   updateProfile(data) { return this.request('PUT', '/auth/update-profile', data); }
   changePassword(data) { return this.request('PUT', '/auth/change-password', data); }
+  forgotPassword(email) { return this.request('POST', '/auth/forgot-password', { email }); }
+  resetPassword(token, password) { return this.request('POST', '/auth/reset-password', { token, password }); }
 
   // Products
   getProducts(params = {}) {

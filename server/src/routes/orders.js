@@ -6,6 +6,7 @@ import { authenticate } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/rbac.js';
 import { validateOrder } from '../middleware/validate.js';
 import logger from '../utils/logger.js';
+import { sendOrderConfirmation, sendAdminOrderNotification } from '../services/emailService.js';
 
 const router = Router();
 
@@ -85,6 +86,14 @@ router.post('/', authenticate, validateOrder, async (req, res) => {
     });
 
     logger.info(`Order created: #${order.id} by user ${req.user.email}, total: ${total}`);
+
+    // Send email notifications (fire-and-forget, don't block response)
+    sendOrderConfirmation(fullOrder, req.user).catch((err) => {
+      logger.warn('Failed to send order confirmation email:', err.message);
+    });
+    sendAdminOrderNotification(fullOrder).catch((err) => {
+      logger.warn('Failed to send admin order notification:', err.message);
+    });
 
     res.status(201).json({
       success: true,

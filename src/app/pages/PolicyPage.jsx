@@ -10,7 +10,7 @@ const policies = {
       { heading: "Phạm vi giao hàng", content: "FashionShop giao hàng toàn quốc, bao gồm tất cả 63 tỉnh thành tại Việt Nam." },
       { heading: "Phí vận chuyển", content: "• Miễn phí vận chuyển cho đơn hàng trên 500.000đ\n• Đơn hàng dưới 500.000đ: phí giao hàng tiêu chuẩn 30.000đ\n• Giao hàng nhanh: 50.000đ" },
       { heading: "Thời gian giao hàng", content: "• Giao hàng tiêu chuẩn: 3-5 ngày làm việc\n• Giao hàng nhanh: 1-2 ngày làm việc\n• Khu vực nội thành TP.HCM và Hà Nội: giao hàng trong ngày (đặt trước 12:00)" },
-      { heading: "Theo dõi đơn hàng", content: "Bạn có thể theo dõi trạng thái đơn hàng qua mục 'Đơn hàng của tôi' trong tài khoản, hoặc liên hệ hotline 1900 xxxx." }
+      { heading: "Theo dõi đơn hàng", content: "Bạn có thể theo dõi trạng thái đơn hàng qua mục 'Đơn hàng của tôi' trong tài khoản, hoặc liên hệ hotline 1900 6868." }
     ]
   },
   return: {
@@ -20,7 +20,7 @@ const policies = {
       { heading: "Điều kiện đổi trả", content: "• Sản phẩm chưa qua sử dụng, còn nguyên tem mác\n• Trong vòng 7 ngày kể từ ngày nhận hàng\n• Có hóa đơn mua hàng" },
       { heading: "Trường hợp được đổi trả", content: "• Sản phẩm bị lỗi do nhà sản xuất\n• Sản phẩm không đúng mô tả, màu sắc khác biệt\n• Sai size, sai sản phẩm\n• Sản phẩm bị hư hỏng trong quá trình vận chuyển" },
       { heading: "Trường hợp không được đổi trả", content: "• Sản phẩm đã qua sử dụng, giặt ủi\n• Không còn nguyên tem mác\n• Quá 7 ngày kể từ ngày nhận hàng\n• Hỏng do lỗi của khách hàng" },
-      { heading: "Quy trình đổi trả", content: "1. Liên hệ hotline 1900 xxxx hoặc email support@fashionshop.vn\n2. Cung cấp mã đơn hàng và lý do đổi trả\n3. Gửi lại sản phẩm (miễn phí vận chuyển)\n4. Nhận sản phẩm mới hoặc hoàn tiền trong 3-5 ngày" }
+      { heading: "Quy trình đổi trả", content: "1. Liên hệ hotline 1900 6868 hoặc email support@fashionshop.vn\n2. Cung cấp mã đơn hàng và lý do đổi trả\n3. Gửi lại sản phẩm (miễn phí vận chuyển)\n4. Nhận sản phẩm mới hoặc hoàn tiền trong 3-5 ngày" }
     ]
   },
   privacy: {
@@ -75,7 +75,7 @@ export function PolicyPage() {
       <div className="mt-12 bg-orange-50 rounded-lg p-6 text-center">
         <p className="text-gray-700 mb-2">Bạn cần thêm hỗ trợ?</p>
         <p className="text-gray-600 text-sm">
-          Liên hệ hotline <span className="font-semibold">1900 xxxx</span> hoặc email{" "}
+          Liên hệ hotline <span className="font-semibold">1900 6868</span> hoặc email{" "}
           <a href="mailto:support@fashionshop.vn" className="text-orange-500 hover:underline">
             support@fashionshop.vn
           </a>

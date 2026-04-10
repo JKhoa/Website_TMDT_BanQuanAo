@@ -48,7 +48,7 @@ Dự án được xây dựng với kiến trúc Client-Server hiện đại, đ
 - *Admin Dashboard:* Quản lý thống kê, xử lý Đơn hàng, quản lý Sản phẩm, Phân quyền người dùng (RBAC).
 
 **B. Server (Hệ thống Backend)**
-- *Công nghệ:* Node.js, Express, MongoDB.
+- *Công nghệ:* Node.js, Express, Sequelize (SQLite/PostgreSQL).
 - *Hệ thống nghiệp vụ:*
   - Middleware bảo mật và tối ưu: Authentication (JWT), Rate Limiter, RBAC (Role-Based Access Control).
   - Quản lý cơ sở dữ liệu: Models hoàn chỉnh cho User, Category, Product, Order, Review.

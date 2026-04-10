@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
+import api from "../services/api";
 
 export function AccountProfilePage() {
   const { user, updateProfile } = useAuth();
@@ -28,7 +29,9 @@ export function AccountProfilePage() {
     setIsEditing(false);
   };
 
-  const handlePasswordChange = (e) => {
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (passwordData.newPassword.length < 6) {
       toast.error("Mật khẩu mới phải có ít nhất 6 ký tự");
@@ -42,10 +45,20 @@ export function AccountProfilePage() {
       toast.error("Vui lòng nhập mật khẩu hiện tại");
       return;
     }
-    // Mock password change
-    toast.success("Đổi mật khẩu thành công!");
-    setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    setShowPasswordForm(false);
+    setChangingPassword(true);
+    try {
+      await api.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+      toast.success("Đổi mật khẩu thành công!");
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setShowPasswordForm(false);
+    } catch (error) {
+      toast.error(error.message || "Đổi mật khẩu thất bại");
+    } finally {
+      setChangingPassword(false);
+    }
   };
 
   return (

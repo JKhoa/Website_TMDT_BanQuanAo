@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useSearch } from "../contexts/SearchContext";
@@ -9,22 +9,38 @@ export function SearchResultsPage() {
   const q = searchParams.get("q") || "";
   const { searchProducts, addRecentSearch } = useSearch();
   const [sortBy, setSortBy] = useState("relevance");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Search and add to recent
-  const results = searchProducts(q);
-  if (q) addRecentSearch(q);
+  // Search via API (async) and add to recent searches
+  useEffect(() => {
+    if (!q) {
+      setResults([]);
+      return;
+    }
+    addRecentSearch(q);
+    let cancelled = false;
+    setLoading(true);
+    searchProducts(q).then((data) => {
+      if (!cancelled) {
+        setResults(data);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [q, searchProducts, addRecentSearch]);
 
   // Sort results
   const sortedResults = [...results].sort((a, b) => {
     switch (sortBy) {
       case "price-asc":
-        return (a.salePrice || a.price) - (b.salePrice || b.price);
+        return (a.salePrice || a.sale_price || a.price) - (b.salePrice || b.sale_price || b.price);
       case "price-desc":
-        return (b.salePrice || b.price) - (a.salePrice || a.price);
+        return (b.salePrice || b.sale_price || b.price) - (a.salePrice || a.sale_price || a.price);
       case "rating":
-        return b.rating - a.rating;
+        return (b.rating || 0) - (a.rating || 0);
       case "newest":
-        return b.id - a.id;
+        return (b.id || 0) - (a.id || 0);
       default: // relevance - already sorted by score
         return 0;
     }
@@ -38,11 +54,15 @@ export function SearchResultsPage() {
           Kết quả tìm kiếm cho "{q}"
         </h1>
         <p className="text-gray-600">
-          Tìm thấy {sortedResults.length} sản phẩm
+          {loading ? "Đang tìm kiếm..." : `Tìm thấy ${sortedResults.length} sản phẩm`}
         </p>
       </div>
 
-      {sortedResults.length > 0 ? (
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" />
+        </div>
+      ) : sortedResults.length > 0 ? (
         <>
           {/* Sort */}
           <div className="flex items-center justify-end mb-6">

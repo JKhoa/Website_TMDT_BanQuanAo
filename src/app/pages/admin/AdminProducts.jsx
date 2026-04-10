@@ -20,18 +20,22 @@ export function AdminProducts() {
   const [editProduct, setEditProduct] = useState(null);
   const [formData, setFormData] = useState(emptyProduct);
 
+  const [error, setError] = useState(null);
+  
   useEffect(() => { loadProducts(); }, [pagination.page]);
 
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const params = { page: pagination.page, limit: 10 };
+      setError(null);
+      const params = { page: pagination.page, limit: 10, include_inactive: 'true' };
       if (search) params.search = search;
       const res = await api.getProducts(params);
-      setProducts(res.products);
-      setPagination(res.pagination);
-    } catch (error) {
-      toast.error(error.message);
+      setProducts(res.products || []);
+      if (res.pagination) setPagination(res.pagination);
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -140,7 +144,20 @@ export function AdminProducts() {
               {loading ? (
                 <tr><td colSpan={6} className="text-center py-12"><div className="animate-spin w-6 h-6 border-4 border-orange-500 border-t-transparent rounded-full mx-auto" /></td></tr>
               ) : products.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-12 text-gray-500">Không có sản phẩm nào</td></tr>
+                <tr><td colSpan={6} className="text-center py-12">
+                  {error ? (
+                    <div className="text-red-500">
+                      <p className="font-semibold mb-2">Không thể tải sản phẩm</p>
+                      <p className="text-sm text-gray-500 mb-3">{error}</p>
+                      <button onClick={loadProducts} className="text-sm text-orange-500 hover:underline">Thử lại</button>
+                    </div>
+                  ) : (
+                    <div className="text-gray-500">
+                      <p className="mb-2">Không có sản phẩm nào</p>
+                      <p className="text-sm text-gray-400">Hãy thêm sản phẩm mới hoặc chạy <code className="bg-gray-100 px-1 rounded">npm run seed</code> trong thư mục server</p>
+                    </div>
+                  )}
+                </td></tr>
               ) : (
                 products.map((product) => (
                   <tr key={product.id} className="border-b hover:bg-gray-50">

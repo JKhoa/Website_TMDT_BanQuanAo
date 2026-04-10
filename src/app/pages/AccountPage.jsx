@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet, useLocation, Navigate } from "react-router";
 import { User, Package, Heart, MapPin, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
@@ -11,8 +11,7 @@ export function AccountPage() {
   const isAdminUser = user?.role === "admin" || user?.isAdmin === true || user?.email === "admin@fashionshop.vn";
 
   if (!user) {
-    navigate("/login");
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   const handleLogout = () => {

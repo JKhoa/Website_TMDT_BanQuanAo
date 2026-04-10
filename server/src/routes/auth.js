@@ -171,4 +171,94 @@ router.put('/change-password', authenticate, async (req, res) => {
   }
 });
 
+// POST /api/auth/forgot-password
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email không được để trống' });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    
+    // Always return success to not reveal if email exists (security)
+    if (!user) {
+      return res.json({ success: true, message: 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn khôi phục.' });
+    }
+
+    // Generate reset token
+    const resetToken = uuidv4();
+    user.reset_token = resetToken;
+    user.reset_token_expires = new Date(Date.now() + 3600000); // 1 hour
+    await user.save();
+
+    // Try to send email (will log warning if SMTP not configured)
+    try {
+      const { sendEmail } = await import('../services/emailService.js');
+      await sendEmail({
+        to: user.email,
+        subject: 'Khôi phục mật khẩu - FashionShop',
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
+            <h2 style="color:#f97316">FashionShop - Khôi phục mật khẩu</h2>
+            <p>Xin chào <strong>${user.name}</strong>,</p>
+            <p>Bạn đã yêu cầu khôi phục mật khẩu. Mã xác nhận của bạn là:</p>
+            <p style="font-size:24px;font-weight:bold;color:#f97316;text-align:center">${resetToken}</p>
+            <p>Mã này có hiệu lực trong 1 giờ.</p>
+            <p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
+            <hr>
+            <p style="color:#666;font-size:12px">FashionShop - Thời trang hiện đại</p>
+          </div>
+        `
+      });
+    } catch {
+      logger.warn(`Could not send reset email to ${email} — SMTP not configured`);
+    }
+
+    logger.info(`Password reset requested for: ${email}`);
+    res.json({ success: true, message: 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn khôi phục.' });
+  } catch (error) {
+    logger.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
+// POST /api/auth/reset-password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      return res.status(400).json({ error: 'Token và mật khẩu mới không được để trống' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Mật khẩu mới phải có ít nhất 6 ký tự' });
+    }
+
+    const { Op } = await import('sequelize');
+    const user = await User.findOne({
+      where: {
+        reset_token: token,
+        reset_token_expires: { [Op.gt]: new Date() }
+      }
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Token không hợp lệ hoặc đã hết hạn' });
+    }
+
+    const bcrypt = (await import('bcrypt')).default;
+    user.password_hash = await bcrypt.hash(password, 12);
+    user.reset_token = null;
+    user.reset_token_expires = null;
+    await user.save();
+
+    logger.info(`Password reset completed for: ${user.email}`);
+    res.json({ success: true, message: 'Đặt lại mật khẩu thành công' });
+  } catch (error) {
+    logger.error('Reset password error:', error);
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
 export default router;
+

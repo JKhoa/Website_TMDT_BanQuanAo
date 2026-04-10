@@ -3,6 +3,7 @@ import { Minus, Plus, X, ShoppingBag, Tag } from "lucide-react";
 import { useCart } from "../contexts/CartContext";
 import { useState } from "react";
 import { resolveImageUrl } from "../utils/imageUrl";
+import { toast } from "sonner";
 
 export function CartPage() {
   const { cart, updateQuantity, removeFromCart, getCartTotal } = useCart();
@@ -14,11 +15,17 @@ export function CartPage() {
   const total = subtotal - discount + shipping;
 
   const applyVoucher = () => {
-    // Mock voucher logic
-    if (voucher === "SALE10") {
+    if (!voucher.trim()) {
+      toast.error("Vui lòng nhập mã giảm giá");
+      return;
+    }
+    // TODO: Integrate with backend voucher API when available
+    if (voucher.toUpperCase() === "SALE10") {
       setDiscount(subtotal * 0.1);
+      toast.success("Áp dụng mã giảm giá thành công! Giảm 10%");
     } else {
       setDiscount(0);
+      toast.error("Mã giảm giá không hợp lệ hoặc đã hết hạn");
     }
   };
 

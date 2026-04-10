@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Eye, ChevronDown } from "lucide-react";
 import api from "../../services/api";
 import { toast } from "sonner";
@@ -90,8 +90,8 @@ export function AdminOrders() {
                 <tr><td colSpan={6} className="text-center py-12 text-gray-500">Không có đơn hàng nào</td></tr>
               ) : (
                 orders.map((order) => (
-                  <>
-                    <tr key={order.id} className="border-b hover:bg-gray-50">
+                  <React.Fragment key={order.id}>
+                    <tr className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 font-medium">#{order.id}</td>
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium">{order.user?.name || order.shipping_name}</p>
@@ -157,7 +157,7 @@ export function AdminOrders() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 ))
               )}
             </tbody>

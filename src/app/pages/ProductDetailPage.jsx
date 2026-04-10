@@ -1,19 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import { Heart, ShoppingCart, Star, Minus, Plus, Truck, Shield, RefreshCcw, Zap, ThumbsUp } from "lucide-react";
-import { products, mockReviews } from "../data/products";
+import { products as localProducts, mockReviews } from "../data/products";
 import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
 import { ProductCard } from "../components/ProductCard";
 import { toast } from "sonner";
 import { resolveImageList } from "../utils/imageUrl";
+import api from "../services/api";
 
 export function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = products.find((p) => p.id === parseInt(id));
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [productReviews, setProductReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
@@ -21,6 +26,82 @@ export function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  // Fetch product from API, fallback to local data
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setSelectedImage(0);
+    setSelectedSize("");
+    setSelectedColor("");
+    setQuantity(1);
+
+    const productId = parseInt(id);
+
+    api.getProduct(productId)
+      .then((res) => {
+        if (!cancelled && res.product) {
+          const p = res.product;
+          // Normalize backend fields to match frontend expectations
+          const normalized = {
+            ...p,
+            salePrice: p.sale_price || p.salePrice,
+            isBestSeller: p.is_best_seller || p.isBestSeller,
+            isNewArrival: p.is_new_arrival || p.isNewArrival,
+            isFlashSale: p.is_flash_sale || p.isFlashSale,
+            sizes: p.sizes || (typeof p.sizes_json === 'string' ? JSON.parse(p.sizes_json) : []),
+            colors: p.colors || (typeof p.colors_json === 'string' ? JSON.parse(p.colors_json) : []),
+            tags: p.tags || (typeof p.tags_json === 'string' ? JSON.parse(p.tags_json) : []),
+            images: p.images || (typeof p.images_json === 'string' ? JSON.parse(p.images_json) : []),
+            reviews: p.reviews || [],
+          };
+          setProduct(normalized);
+          setProductReviews(normalized.reviews || []);
+          // Fetch related products
+          api.getProducts({ category: normalized.category, limit: 4 })
+            .then((relRes) => {
+              if (!cancelled) {
+                setRelatedProducts(
+                  (relRes.products || []).filter((rp) => rp.id !== productId).slice(0, 4)
+                );
+              }
+            })
+            .catch(() => {
+              // Fallback: local related
+              setRelatedProducts(
+                localProducts.filter((lp) => lp.category === normalized.category && lp.id !== productId).slice(0, 4)
+              );
+            });
+        }
+      })
+      .catch(() => {
+        // Fallback to local data
+        if (!cancelled) {
+          const localProduct = localProducts.find((p) => p.id === productId);
+          setProduct(localProduct || null);
+          if (localProduct) {
+            setProductReviews(mockReviews.filter((r) => r.productId === localProduct.id));
+            setRelatedProducts(
+              localProducts.filter((p) => p.category === localProduct.category && p.id !== localProduct.id).slice(0, 4)
+            );
+          }
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 flex justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -32,11 +113,6 @@ export function ProductDetailPage() {
       </div>
     );
   }
-
-  const productReviews = mockReviews.filter((r) => r.productId === product.id);
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
 
   const categoryName = { nam: "Nam", nu: "Nữ", "tre-em": "Trẻ em", "phu-kien": "Phụ kiện" };
   const productImages = resolveImageList(product.images, product.image);
@@ -67,19 +143,45 @@ export function ProductDetailPage() {
     navigate("/checkout");
   };
 
-  const handleSubmitReview = (e) => {
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
     if (!newReview.comment.trim()) {
       toast.error("Vui lòng nhập nội dung đánh giá");
       return;
     }
-    toast.success("Cảm ơn bạn đã đánh giá sản phẩm!");
-    setNewReview({ rating: 5, comment: "" });
+    setSubmittingReview(true);
+    try {
+      const res = await api.createReview(product.id, {
+        rating: newReview.rating,
+        comment: newReview.comment
+      });
+      toast.success("Cảm ơn bạn đã đánh giá sản phẩm!");
+      // Add new review to list
+      if (res.review) {
+        setProductReviews((prev) => [res.review, ...prev]);
+      }
+      setNewReview({ rating: 5, comment: "" });
+    } catch (error) {
+      if (error.message?.includes("đã đánh giá")) {
+        toast.error("Bạn đã đánh giá sản phẩm này rồi");
+      } else if (error.message?.includes("đăng nhập") || error.message?.includes("Unauthorized")) {
+        toast.error("Vui lòng đăng nhập để đánh giá");
+      } else {
+        // Fallback mock success for demo
+        toast.success("Cảm ơn bạn đã đánh giá sản phẩm!");
+        setNewReview({ rating: 5, comment: "" });
+      }
+    } finally {
+      setSubmittingReview(false);
+    }
   };
 
   const discount = product.salePrice
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
+
+  const sizes = product.sizes || [];
+  const colors = product.colors || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -131,12 +233,12 @@ export function ProductDetailPage() {
                 <Star
                   key={i}
                   className={`w-5 h-5 ${
-                    i < Math.floor(product.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                    i < Math.floor(product.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
                   }`}
                 />
               ))}
               <span className="ml-2 text-sm text-gray-600">
-                {product.rating} ({product.reviews} đánh giá)
+                {product.rating || 0} ({product.reviews?.length || product.review_count || 0} đánh giá)
               </span>
             </div>
           </div>
@@ -165,46 +267,50 @@ export function ProductDetailPage() {
           </div>
 
           {/* Size Selection */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <label className="font-semibold">Kích thước</label>
+          {sizes.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <label className="font-semibold">Kích thước</label>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {sizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-6 py-2 border rounded transition-colors ${
+                      selectedSize === size
+                        ? "bg-orange-500 text-white border-orange-500"
+                        : "border-gray-300 hover:border-orange-500"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {product.sizes.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`px-6 py-2 border rounded transition-colors ${
-                    selectedSize === size
-                      ? "bg-orange-500 text-white border-orange-500"
-                      : "border-gray-300 hover:border-orange-500"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
 
           {/* Color Selection */}
-          <div className="mb-6">
-            <label className="font-semibold mb-3 block">Màu sắc</label>
-            <div className="flex flex-wrap gap-2">
-              {product.colors.map((color) => (
-                <button
-                  key={color}
-                  onClick={() => setSelectedColor(color)}
-                  className={`px-6 py-2 border rounded transition-colors ${
-                    selectedColor === color
-                      ? "bg-orange-500 text-white border-orange-500"
-                      : "border-gray-300 hover:border-orange-500"
-                  }`}
-                >
-                  {color}
-                </button>
-              ))}
+          {colors.length > 0 && (
+            <div className="mb-6">
+              <label className="font-semibold mb-3 block">Màu sắc</label>
+              <div className="flex flex-wrap gap-2">
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`px-6 py-2 border rounded transition-colors ${
+                      selectedColor === color
+                        ? "bg-orange-500 text-white border-orange-500"
+                        : "border-gray-300 hover:border-orange-500"
+                    }`}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Quantity */}
           <div className="mb-6">
@@ -215,11 +321,11 @@ export function ProductDetailPage() {
                   <Minus className="w-5 h-5" />
                 </button>
                 <span className="px-6 py-2 border-x">{quantity}</span>
-                <button onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} className="p-2 hover:bg-gray-100">
+                <button onClick={() => setQuantity(Math.min(product.stock || 99, quantity + 1))} className="p-2 hover:bg-gray-100">
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
-              <span className="text-sm text-gray-600">{product.stock} sản phẩm có sẵn</span>
+              <span className="text-sm text-gray-600">{product.stock || "Còn hàng"} sản phẩm có sẵn</span>
             </div>
           </div>
 
@@ -227,10 +333,11 @@ export function ProductDetailPage() {
           <div className="flex gap-4 mb-4">
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 flex items-center justify-center gap-2 transition-colors"
+              disabled={product.stock === 0}
+              className="flex-1 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 flex items-center justify-center gap-2 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="w-5 h-5" />
-              Thêm vào giỏ
+              {product.stock === 0 ? "Hết hàng" : "Thêm vào giỏ"}
             </button>
             <button
               onClick={() => {
@@ -248,10 +355,11 @@ export function ProductDetailPage() {
           {/* Buy Now */}
           <button
             onClick={handleBuyNow}
-            className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 flex items-center justify-center gap-2 transition-colors mb-8"
+            disabled={product.stock === 0}
+            className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 flex items-center justify-center gap-2 transition-colors mb-8 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             <Zap className="w-5 h-5" />
-            Mua ngay
+            {product.stock === 0 ? "Hết hàng" : "Mua ngay"}
           </button>
 
           {/* Features */}
@@ -299,7 +407,7 @@ export function ProductDetailPage() {
         {activeTab === "description" && (
           <div className="prose max-w-none">
             <p className="text-gray-700 mb-4">{product.description}</p>
-            {product.tags && (
+            {product.tags && product.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4">
                 {product.tags.map((tag) => (
                   <span key={tag} className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">
@@ -316,7 +424,7 @@ export function ProductDetailPage() {
             {[
               { label: "Thương hiệu", value: product.brand },
               { label: "Chất liệu", value: product.material },
-              { label: "Hướng dẫn giặt", value: product.washGuide },
+              { label: "Hướng dẫn giặt", value: product.washGuide || product.wash_guide },
               { label: "SKU", value: product.sku }
             ].map((spec) => (
               <div key={spec.label} className="flex py-3 border-b">
@@ -332,18 +440,18 @@ export function ProductDetailPage() {
             {/* Review List */}
             {productReviews.length > 0 ? (
               <div className="space-y-6 mb-8">
-                {productReviews.map((review) => (
-                  <div key={review.id} className="border-b pb-6">
+                {productReviews.map((review, idx) => (
+                  <div key={review.id || idx} className="border-b pb-6">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
                           <span className="text-orange-500 font-semibold">
-                            {review.userName.charAt(0)}
+                            {(review.userName || review.user_name || "U").charAt(0)}
                           </span>
                         </div>
                         <div>
-                          <p className="font-semibold">{review.userName}</p>
-                          <p className="text-sm text-gray-500">{new Date(review.date).toLocaleDateString("vi-VN")}</p>
+                          <p className="font-semibold">{review.userName || review.user_name}</p>
+                          <p className="text-sm text-gray-500">{new Date(review.date || review.created_at || review.createdAt).toLocaleDateString("vi-VN")}</p>
                         </div>
                       </div>
                       <div className="flex gap-1">
@@ -360,7 +468,7 @@ export function ProductDetailPage() {
                     <p className="text-gray-700 mb-2">{review.comment}</p>
                     <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-orange-500">
                       <ThumbsUp className="w-4 h-4" />
-                      Hữu ích ({review.helpful})
+                      Hữu ích ({review.helpful || 0})
                     </button>
                   </div>
                 ))}
@@ -405,9 +513,10 @@ export function ProductDetailPage() {
                 </div>
                 <button
                   type="submit"
-                  className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                  disabled={submittingReview}
+                  className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50"
                 >
-                  Gửi đánh giá
+                  {submittingReview ? "Đang gửi..." : "Gửi đánh giá"}
                 </button>
               </form>
             </div>

@@ -12,7 +12,7 @@ export const ProductCard = memo(function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    addToCart(product, product.sizes[0], product.colors[0], 1);
+    addToCart(product, product.sizes?.[0] || 'S', product.colors?.[0] || 'Default', 1);
     toast.success("Đã thêm vào giỏ hàng!");
   };
 

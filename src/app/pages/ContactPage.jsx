@@ -27,7 +27,7 @@ export function ContactPage() {
         <div className="space-y-6">
           {[
             { icon: MapPin, title: "Địa chỉ", content: "123 Đường ABC, Quận 1, TP. Hồ Chí Minh" },
-            { icon: Phone, title: "Hotline", content: "1900 xxxx (8:00 - 22:00)" },
+            { icon: Phone, title: "Hotline", content: "1900 6868 (8:00 - 22:00)" },
             { icon: Mail, title: "Email", content: "support@fashionshop.vn" },
             { icon: Clock, title: "Giờ làm việc", content: "Thứ 2 - Chủ nhật, 8:00 - 22:00" }
           ].map((item, i) => (

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import api from "../services/api";
 
 const AuthContext = createContext();
@@ -8,6 +8,9 @@ export function AuthProvider({ children }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Helper: get user-scoped localStorage key for orders
+  const getOrdersKey = (userId) => `orders_${userId || "guest"}`;
+
   // On mount: restore session from token or localStorage
   useEffect(() => {
     const initAuth = async () => {
@@ -16,10 +19,16 @@ export function AuthProvider({ children }) {
         try {
           const res = await api.getMe();
           setUser(res.user);
-        } catch {
-          // Token invalid, clear it
-          api.clearTokens();
-          localStorage.removeItem("user");
+        } catch (error) {
+          if (error.message === 'Failed to fetch') {
+            // Backend unavailable, fallback to local storage user
+            const savedUser = localStorage.getItem("user");
+            if (savedUser) setUser(JSON.parse(savedUser));
+          } else {
+            // Token invalid, clear it
+            api.clearTokens();
+            localStorage.removeItem("user");
+          }
         }
       } else {
         // Fallback to localStorage user (mock mode)
@@ -27,13 +36,30 @@ export function AuthProvider({ children }) {
         if (savedUser) setUser(JSON.parse(savedUser));
       }
 
-      const savedOrders = localStorage.getItem("orders");
-      if (savedOrders) setOrders(JSON.parse(savedOrders));
-
       setLoading(false);
     };
     initAuth();
   }, []);
+
+  // Fetch orders from backend when user changes
+  const fetchOrders = useCallback(async () => {
+    if (!user) {
+      setOrders([]);
+      return;
+    }
+    try {
+      const res = await api.getOrders();
+      setOrders(res.orders || []);
+    } catch {
+      // Fallback: load from user-scoped localStorage
+      const savedOrders = localStorage.getItem(getOrdersKey(user.id));
+      if (savedOrders) setOrders(JSON.parse(savedOrders));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   useEffect(() => {
     if (user) {
@@ -43,9 +69,12 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
+  // Save orders to user-scoped localStorage as backup
   useEffect(() => {
-    localStorage.setItem("orders", JSON.stringify(orders));
-  }, [orders]);
+    if (user && orders.length > 0) {
+      localStorage.setItem(getOrdersKey(user.id), JSON.stringify(orders));
+    }
+  }, [orders, user]);
 
   const login = async (email, password) => {
     try {
@@ -86,6 +115,7 @@ export function AuthProvider({ children }) {
     }
     api.clearTokens();
     setUser(null);
+    setOrders([]);
   };
 
   const updateProfile = async (updatedData) => {
@@ -161,23 +191,56 @@ export function AuthProvider({ children }) {
     }));
   };
 
-  const createOrder = (orderData) => {
-    const newOrder = {
-      id: Date.now(),
-      ...orderData,
-      createdAt: new Date().toISOString(),
-      status: "pending"
+  const createOrder = async (orderData) => {
+    // Build payload matching backend schema
+    const backendPayload = {
+      items: orderData.items.map((item) => ({
+        product_id: item.id,
+        quantity: item.quantity,
+        size: item.size || "",
+        color: item.color || ""
+      })),
+      shipping_name: orderData.shippingInfo.name,
+      shipping_phone: orderData.shippingInfo.phone,
+      shipping_address: orderData.shippingInfo.address,
+      shipping_city: orderData.shippingInfo.city || "",
+      shipping_district: orderData.shippingInfo.district || "",
+      shipping_ward: orderData.shippingInfo.ward || "",
+      payment_method: orderData.paymentMethod || "cod",
+      shipping_method: orderData.shippingMethod || "standard"
     };
-    setOrders((prev) => [newOrder, ...prev]);
-    return newOrder;
+
+    try {
+      const res = await api.createOrder(backendPayload);
+      // Refresh orders from backend
+      await fetchOrders();
+      return res.order;
+    } catch {
+      // Fallback: create local order
+      const newOrder = {
+        id: Date.now(),
+        ...orderData,
+        createdAt: new Date().toISOString(),
+        status: "pending"
+      };
+      setOrders((prev) => [newOrder, ...prev]);
+      return newOrder;
+    }
   };
 
-  const cancelOrder = (orderId) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, status: "cancelled" } : order
-      )
-    );
+  const cancelOrder = async (orderId) => {
+    try {
+      await api.cancelOrder(orderId);
+      // Refresh orders from backend
+      await fetchOrders();
+    } catch {
+      // Fallback: local cancel
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: "cancelled" } : order
+        )
+      );
+    }
   };
 
   return (
@@ -194,7 +257,8 @@ export function AuthProvider({ children }) {
         updateAddress,
         deleteAddress,
         createOrder,
-        cancelOrder
+        cancelOrder,
+        fetchOrders
       }}
     >
       {children}
