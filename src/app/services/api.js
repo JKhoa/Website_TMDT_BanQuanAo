@@ -1,10 +1,16 @@
-const configuredApiBase = (import.meta.env.VITE_API_BASE_URL || '').trim();
-const isGithubPages =
-  typeof window !== 'undefined' && window.location.hostname.endsWith('github.io');
-const isLocalApiBase = /localhost|127\.0\.0\.1/i.test(configuredApiBase);
-const shouldUseMockMode =
-  import.meta.env.PROD && isGithubPages && (!configuredApiBase || isLocalApiBase);
-const API_BASE = (configuredApiBase || 'http://localhost:3001/api').replace(/\/$/, '');
+const envApiBase = (import.meta.env.VITE_API_BASE_URL || "").trim();
+const isLocalhost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+const isGithubPages = typeof window !== "undefined" && window.location.hostname.endsWith("github.io");
+
+// Only use mock mode if we are on GitHub Pages AND no real API URL is provided
+const shouldUseMockMode = isGithubPages && !envApiBase;
+
+// Default API URL if not provided in env
+const API_BASE = (envApiBase || "http://localhost:3001/api").replace(/\/$/, "");
+
+if (isLocalhost) {
+  console.log(`🌐 API Base URL: ${API_BASE} (Mock: ${shouldUseMockMode ? "ON" : "OFF"})`);
+}
 
 class ApiService {
   constructor() {
@@ -208,10 +214,10 @@ class ApiService {
     }
 
     if (this.useMockMode) {
-      throw new Error('Backend chưa được cấu hình. Hãy đặt VITE_API_BASE_URL để dùng database thật.');
+      throw new Error(`Chế độ Demo: Không tìm thấy dữ liệu giả cho endpoint ${endpoint}. Vui lòng cấu hình VITE_API_BASE_URL để dùng database thật.`);
     }
 
-    throw new Error('Không thể kết nối backend API. Vui lòng kiểm tra server và cấu hình URL.');
+    throw new Error(`Lỗi kết nối: Không thể gọi API tại ${this.baseUrl}${endpoint}. Hãy chắc chắn Backend đang chạy tại port 3001.`);
   }
 
   async refreshToken() {
