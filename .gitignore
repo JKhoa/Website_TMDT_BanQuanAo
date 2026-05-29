@@ -3,3 +3,11 @@ dist/
 backend/
 .env
 .DS_Store
+
+# Ignore reports
+*.doc
+*.docx
+*.txt
+BaoCao_*
+TOMTATBAOCAO*
+~$*
