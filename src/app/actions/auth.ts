@@ -31,6 +31,8 @@ export async function registerAction(formData: FormData) {
   const password = formData.get('password') as string
   const name = formData.get('name') as string
 
+  const role = formData.get('role') as string || 'user'
+
   if (!email || !password || !name) {
     return { success: false, error: 'Vui lòng nhập đầy đủ thông tin' }
   }
@@ -43,6 +45,7 @@ export async function registerAction(formData: FormData) {
     options: {
       data: {
         name: name,
+        role: role,
       },
     },
   })

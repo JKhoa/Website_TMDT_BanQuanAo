@@ -15,7 +15,8 @@ export function LoginPage() {
     email: "",
     password: "",
     name: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    role: "user"
   });
   const [errors, setErrors] = useState<any>({});
 
@@ -54,7 +55,10 @@ export function LoginPage() {
       const payload = new FormData();
       payload.append("email", formData.email);
       payload.append("password", formData.password);
-      if (!isLogin) payload.append("name", formData.name);
+      if (!isLogin) {
+        payload.append("name", formData.name);
+        payload.append("role", formData.role);
+      }
 
       if (isLogin) {
         const result = await loginAction(payload);
@@ -100,6 +104,36 @@ export function LoginPage() {
                   placeholder="Nguyễn Văn A"
                 />
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              </div>
+            )}
+
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-semibold mb-2">Vai trò</label>
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="role"
+                      value="user"
+                      checked={formData.role === "user"}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+                    />
+                    <span>Người mua</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="role"
+                      value="admin"
+                      checked={formData.role === "admin"}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+                    />
+                    <span>Người bán</span>
+                  </label>
+                </div>
               </div>
             )}
 
@@ -175,7 +209,7 @@ export function LoginPage() {
               onClick={() => {
                 setIsLogin(!isLogin);
                 setErrors({});
-                setFormData({ email: "", password: "", name: "", confirmPassword: "" });
+                setFormData({ email: "", password: "", name: "", confirmPassword: "", role: "user" });
               }}
               className="text-sm text-gray-600"
             >
