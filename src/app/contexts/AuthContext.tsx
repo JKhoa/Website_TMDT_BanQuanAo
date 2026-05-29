@@ -93,6 +93,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await updateProfile({ addresses: newAddresses });
   };
 
+  const createOrder = async (orderData: any) => {
+    if (!user) throw new Error("Vui lòng đăng nhập để đặt hàng");
+    
+    // Stuff items into shipping_info to bypass order_items foreign key constraints if products aren't seeded
+    const enrichedShippingInfo = {
+      ...orderData.shippingInfo,
+      items: orderData.items // Save cart items in JSONB
+    };
+
+    const { data: order, error } = await supabase
+      .from('orders')
+      .insert({
+        user_id: user.id,
+        total_amount: orderData.total,
+        shipping_info: enrichedShippingInfo,
+        payment_method: orderData.paymentMethod,
+        status: 'pending'
+      })
+      .select()
+      .single();
+      
+    if (error) {
+      console.error("Order creation error:", error);
+      throw new Error(error.message);
+    }
+    
+    // Optionally try to insert into order_items, but don't fail if it violates foreign keys (e.g. unseeded products)
+    try {
+      const orderItems = orderData.items.map((item: any) => ({
+        order_id: order.id,
+        product_id: item.id.toString().length === 36 ? item.id : null, // Only insert valid UUIDs, otherwise null
+        quantity: item.quantity,
+        price: item.salePrice || item.price || 0,
+        size: item.size,
+        color: item.color
+      }));
+      
+      const validItems = orderItems.filter((i: any) => i.product_id !== null);
+      if (validItems.length > 0) {
+        await supabase.from('order_items').insert(validItems);
+      }
+    } catch (e) {
+      console.log("Could not insert order_items, relying on JSONB data instead", e);
+    }
+
+    setOrders([order, ...orders]);
+    return order;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -103,7 +152,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         addAddress,
         updateAddress,
         deleteAddress,
-        fetchOrders
+        fetchOrders,
+        createOrder
       }}
     >
       {children}
