@@ -39,3 +39,16 @@
 {"level":"debug","message":"POST /api/auth/login","service":"fashionshop-api","timestamp":"2026-04-10 10:53:13"}
 {"level":"debug","message":"GET /api/products","service":"fashionshop-api","timestamp":"2026-04-10 10:53:30"}
 {"level":"debug","message":"GET /api/admin/top-products","service":"fashionshop-api","timestamp":"2026-04-10 10:53:38"}
+{"level":"info","message":"✅ Database connected","service":"fashionshop-api","timestamp":"2026-04-10 11:00:22"}
+{"level":"info","message":"✅ Database synced","service":"fashionshop-api","timestamp":"2026-04-10 11:00:22"}
+{"level":"info","message":"🚀 Server running at http://localhost:3001","service":"fashionshop-api","timestamp":"2026-04-10 11:00:22"}
+{"level":"info","message":"📡 API: http://localhost:3001/api","service":"fashionshop-api","timestamp":"2026-04-10 11:00:22"}
+{"level":"debug","message":"GET /api/health","service":"fashionshop-api","timestamp":"2026-04-10 11:00:26"}
+{"level":"debug","message":"GET /favicon.ico","service":"fashionshop-api","timestamp":"2026-04-10 11:00:26"}
+{"level":"debug","message":"GET /","service":"fashionshop-api","timestamp":"2026-04-10 11:00:29"}
+{"level":"debug","message":"GET /","service":"fashionshop-api","timestamp":"2026-04-10 11:00:31"}
+{"level":"debug","message":"GET /","service":"fashionshop-api","timestamp":"2026-04-10 11:00:37"}
+{"level":"info","message":"✅ Database connected","service":"fashionshop-api","timestamp":"2026-04-10 11:03:30"}
+{"level":"info","message":"✅ Database synced","service":"fashionshop-api","timestamp":"2026-04-10 11:03:30"}
+{"level":"info","message":"🚀 Server running at http://localhost:3001","service":"fashionshop-api","timestamp":"2026-04-10 11:03:30"}
+{"level":"info","message":"📡 API: http://localhost:3001/api","service":"fashionshop-api","timestamp":"2026-04-10 11:03:30"}

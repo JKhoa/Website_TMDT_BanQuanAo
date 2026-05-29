@@ -62,16 +62,22 @@ export function ProductListPage() {
     return () => { cancelled = true; };
   }, [selectedCategory, selectedSubcategory, sortBy, currentPage, saleOnly, minPrice, maxPrice]);
 
-  const updateParam = useCallback((key, value) => {
+  const updateParams = useCallback((updates) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      if (!value || value === "0" || (key === "maxPrice" && value === "10000000")) {
-        newParams.delete(key);
-      } else {
-        newParams.set(key, value);
-      }
-      // Reset page when changing filters
-      if (key !== "page") {
+      let pageReset = false;
+      Object.entries(updates).forEach(([key, value]) => {
+        if (!value || value === "0" || (key === "maxPrice" && value === "10000000")) {
+          newParams.delete(key);
+        } else {
+          newParams.set(key, value);
+        }
+        // Reset page when changing filters
+        if (key !== "page") {
+          pageReset = true;
+        }
+      });
+      if (pageReset) {
         newParams.delete("page");
       }
       return newParams;
@@ -186,10 +192,7 @@ export function ProductListPage() {
               <h3 className="font-semibold mb-3">Danh mục</h3>
               <div className="space-y-2">
                 <button
-                  onClick={() => {
-                    updateParam("category", "");
-                    updateParam("subcategory", "");
-                  }}
+                  onClick={() => updateParams({ category: "", subcategory: "" })}
                   className={`block w-full text-left px-3 py-2 rounded text-sm transition-colors ${
                     !selectedCategory ? "bg-orange-500 text-white" : "hover:bg-orange-50"
                   }`}
@@ -199,10 +202,7 @@ export function ProductListPage() {
                 {categories.map((cat) => (
                   <div key={cat.id}>
                     <button
-                      onClick={() => {
-                        updateParam("category", cat.id);
-                        updateParam("subcategory", "");
-                      }}
+                      onClick={() => updateParams({ category: cat.id, subcategory: "" })}
                       className={`block w-full text-left px-3 py-2 rounded text-sm transition-colors ${
                         selectedCategory === cat.id ? "bg-orange-500 text-white" : "hover:bg-orange-50"
                       }`}
@@ -214,7 +214,7 @@ export function ProductListPage() {
                         {cat.subcategories.map((sub) => (
                           <button
                             key={sub.id}
-                            onClick={() => updateParam("subcategory", sub.id)}
+                            onClick={() => updateParams({ subcategory: sub.id })}
                             className={`block w-full text-left px-3 py-1 rounded text-sm transition-colors ${
                               selectedSubcategory === sub.id ? "text-orange-500 font-semibold" : "text-gray-600 hover:text-orange-500"
                             }`}
@@ -241,10 +241,7 @@ export function ProductListPage() {
                 ].map((range) => (
                   <button
                     key={range.label}
-                    onClick={() => {
-                      updateParam("minPrice", String(range.min));
-                      updateParam("maxPrice", String(range.max));
-                    }}
+                    onClick={() => updateParams({ minPrice: String(range.min), maxPrice: String(range.max) })}
                     className={`block w-full text-left px-3 py-2 rounded text-sm transition-colors ${
                       minPrice === range.min && maxPrice === range.max
                         ? "bg-orange-500 text-white"
@@ -263,7 +260,7 @@ export function ProductListPage() {
                 <input
                   type="checkbox"
                   checked={saleOnly}
-                  onChange={(e) => updateParam("sale", e.target.checked ? "true" : "")}
+                  onChange={(e) => updateParams({ sale: e.target.checked ? "true" : "" })}
                   className="w-4 h-4 text-orange-500 rounded"
                 />
                 <span className="text-sm">Chỉ sản phẩm giảm giá</span>
@@ -288,7 +285,7 @@ export function ProductListPage() {
               <span className="text-sm text-gray-600">Sắp xếp:</span>
               <select
                 value={sortBy}
-                onChange={(e) => updateParam("sort", e.target.value)}
+                onChange={(e) => updateParams({ sort: e.target.value })}
                 className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="newest">Mới nhất</option>
@@ -317,7 +314,7 @@ export function ProductListPage() {
                 <div className="flex justify-center items-center gap-2 mt-12">
                   <button
                     disabled={currentPage <= 1}
-                    onClick={() => updateParam("page", String(currentPage - 1))}
+                    onClick={() => updateParams({ page: String(currentPage - 1) })}
                     className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronLeft className="w-5 h-5" />
@@ -325,7 +322,7 @@ export function ProductListPage() {
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <button
                       key={page}
-                      onClick={() => updateParam("page", String(page))}
+                      onClick={() => updateParams({ page: String(page) })}
                       className={`w-10 h-10 rounded-lg transition-colors ${
                         currentPage === page
                           ? "bg-orange-500 text-white"
@@ -337,7 +334,7 @@ export function ProductListPage() {
                   ))}
                   <button
                     disabled={currentPage >= totalPages}
-                    onClick={() => updateParam("page", String(currentPage + 1))}
+                    onClick={() => updateParams({ page: String(currentPage + 1) })}
                     className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronRight className="w-5 h-5" />

@@ -104,31 +104,7 @@ export const products = [
     isBestSeller: true,
     isNewArrival: false
   },
-  {
-    id: 11,
-    name: "Áo Polo Nam Classic",
-    sku: "AP-NAM-001",
-    category: "nam",
-    subcategory: "ao-thun",
-    price: 380000,
-    salePrice: 299000,
-    rating: 4.4,
-    reviews: 85,
-    image: "https://images.unsplash.com/photo-1625910513413-5fc42c3e88dd?w=600",
-    images: [
-      "https://images.unsplash.com/photo-1625910513413-5fc42c3e88dd?w=600"
-    ],
-    sizes: ["S", "M", "L", "XL"],
-    colors: ["Đen", "Trắng", "Navy", "Đỏ"],
-    brand: "Fashion Co.",
-    material: "Cotton pique",
-    description: "Áo polo nam classic, form regular fit thoải mái. Chất vải pique thoáng mát, phù hợp đi chơi lẫn đi làm.",
-    washGuide: "Giặt máy ở nhiệt độ thường",
-    tags: ["polo", "nam", "classic", "thoáng mát", "casual"],
-    stock: 100,
-    isBestSeller: false,
-    isNewArrival: true
-  },
+
   {
     id: 12,
     name: "Quần Short Nam Kaki",
@@ -388,31 +364,7 @@ export const products = [
     isBestSeller: true,
     isNewArrival: false
   },
-  {
-    id: 18,
-    name: "Nón Bucket Unisex",
-    sku: "NB-PK-001",
-    category: "phu-kien",
-    subcategory: "non",
-    price: 180000,
-    salePrice: 140000,
-    rating: 4.2,
-    reviews: 58,
-    image: "https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=600",
-    images: [
-      "https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=600"
-    ],
-    sizes: ["One Size"],
-    colors: ["Đen", "Be", "Xanh navy"],
-    brand: "Urban Fashion",
-    material: "Canvas cotton",
-    description: "Nón bucket unisex phong cách streetwear. Chất canvas dày dặn, chống nắng tốt.",
-    washGuide: "Giặt tay nhẹ nhàng",
-    tags: ["nón", "bucket", "unisex", "streetwear", "phụ kiện"],
-    stock: 150,
-    isBestSeller: false,
-    isNewArrival: true
-  },
+
   {
     id: 19,
     name: "Thắt Lưng Da Nam",
@@ -542,32 +494,7 @@ export const products = [
   },
 
   // ========== SẢN PHẨM FLASH SALE ==========
-  {
-    id: 10,
-    name: "Áo Phao Mùa Đông",
-    sku: "AP-NAM-002",
-    category: "nam",
-    subcategory: "ao-khoac",
-    price: 1500000,
-    salePrice: 1200000,
-    rating: 4.9,
-    reviews: 64,
-    image: "https://images.unsplash.com/photo-1544923246-77307dd270b0?w=600",
-    images: [
-      "https://images.unsplash.com/photo-1544923246-77307dd270b0?w=600"
-    ],
-    sizes: ["M", "L", "XL", "XXL"],
-    colors: ["Đen", "Xanh navy", "Xám"],
-    brand: "Winter Style",
-    material: "Polyester chần bông",
-    description: "Áo phao mùa đông giữ ấm cực tốt, chống thấm nước. Lớp lót bông mềm mại, nhẹ nhàng.",
-    washGuide: "Giặt khô",
-    tags: ["áo phao", "mùa đông", "nam", "giữ ấm", "chống thấm"],
-    stock: 40,
-    isBestSeller: true,
-    isNewArrival: true,
-    isFlashSale: true
-  },
+
   {
     id: 23,
     name: "Đầm Midi Nữ Hoa Nhí",
@@ -706,5 +633,4 @@ export const mockReviews = [
   { id: 9, productId: 7, userName: "Phạm Văn I", rating: 4, comment: "Túi đẹp, nhiều ngăn tiện lợi. Da hơi cứng ban đầu.", date: "2026-03-13", helpful: 7 },
   { id: 10, productId: 8, userName: "Hoàng Thị K", rating: 5, comment: "Giày rất êm, chạy bộ thoải mái. Size chuẩn.", date: "2026-03-07", helpful: 14 },
   { id: 11, productId: 14, userName: "Nguyễn Thị L", rating: 5, comment: "Áo oversize mặc thoải mát, phong cách Hàn Quốc.", date: "2026-03-16", helpful: 9 },
-  { id: 12, productId: 10, userName: "Trần Văn M", rating: 5, comment: "Áo phao ấm thật sự, đi Đà Lạt mặc cực ổn.", date: "2026-03-06", helpful: 22 },
 ];

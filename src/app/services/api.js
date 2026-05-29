@@ -188,14 +188,43 @@ class ApiService {
       return { data: [] };
     }
     if (endpoint.startsWith('/admin/customers') && method === 'GET') {
-      return {
-        customers: [],
-        pagination: {
-          total: 0,
-          page: 1,
-          limit: 10,
-          totalPages: 1
+      const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
+      const search = urlParams.get('search')?.toLowerCase() || '';
+      const page = parseInt(urlParams.get('page') || '1');
+      const limit = parseInt(urlParams.get('limit') || '10');
+
+      let allCustomers = Object.values(registeredUsers).filter(u => u.role === 'customer');
+
+      // Generate fake demo customers to match the 20 customers in dashboard
+      if (allCustomers.length < 20) {
+        for (let i = 1; i <= 20; i++) {
+          allCustomers.push({
+            id: 1000 + i,
+            name: `Khách hàng Demo ${i}`,
+            email: `khachhang${i}@gmail.com`,
+            phone: `09876543${String(i).padStart(2, '0')}`,
+            created_at: new Date(Date.now() - i * 86400000).toISOString(),
+            email_verified: true
+          });
         }
+      }
+
+      if (search) {
+        allCustomers = allCustomers.filter(c => 
+          c.name.toLowerCase().includes(search) || 
+          c.email.toLowerCase().includes(search) || 
+          (c.phone && c.phone.includes(search))
+        );
+      }
+
+      const total = allCustomers.length;
+      const totalPages = Math.ceil(total / limit);
+      const start = (page - 1) * limit;
+      const paged = allCustomers.slice(start, start + limit);
+
+      return {
+        customers: paged,
+        pagination: { total, page, limit, totalPages }
       };
     }
     if (endpoint.startsWith('/products') && method === 'GET') {
