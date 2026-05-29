@@ -11,11 +11,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
+  const formatUser = (supabaseUser: any) => {
+    if (!supabaseUser) return null;
+    return {
+      ...supabaseUser,
+      ...supabaseUser.user_metadata,
+    };
+  };
+
   // On mount: listen to Supabase auth state
   useEffect(() => {
     const fetchSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
+      setUser(formatUser(session?.user));
       setLoading(false);
     };
 
@@ -23,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setUser(session?.user || null);
+        setUser(formatUser(session?.user));
       }
     );
 
