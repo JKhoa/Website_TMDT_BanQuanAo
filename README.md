@@ -41,7 +41,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 ```bash
 npm run dev
 ```
-Truy cập `http://localhost:3000` trên trình duyệt để xem trang web!
+Truy cập `https://fashionshop-web.onrender.com/` trên trình duyệt để xem trang web!
 
 ## ☁️ Hướng dẫn Triển khai (Deploy) lên Render.com
 
@@ -55,7 +55,3 @@ Dự án này đã được cấu hình sẵn tính năng Deploy tự động qu
 **Lưu ý sau khi Deploy:** 
 Bạn bắt buộc phải vào **Supabase Dashboard -> Authentication -> URL Configuration**, thiết lập *Site URL* và *Redirect URLs* khớp với tên miền của Render (Ví dụ: `https://fashionshop-web.onrender.com`) để chức năng Đăng nhập hoạt động chính xác.
 
-## 🔑 Tài khoản mặc định (Dành cho Demo)
-Bạn có thể tự đăng ký một tài khoản mới qua màn hình Đăng ký, hoặc sử dụng tài khoản Admin cấp cao có sẵn (nếu cấu hình trong DB):
-- **Email**: `admin@fashionshop.vn`
-- **Mật khẩu**: `Admin123!`
