@@ -1,30 +1,12 @@
 services:
   - type: web
-    name: fashionshop-api
-    env: docker
-    rootDir: server
+    name: fashionshop-web
+    env: node
     plan: free
-    healthCheckPath: /api/health
-    disk:
-      name: fashionshop-data
-      mountPath: /opt/render/project/src/server-data
-      sizeGB: 1
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 3001
-      - key: DB_DIALECT
-        value: sqlite
-      - key: DB_STORAGE
-        value: /opt/render/project/src/server-data/database.sqlite
-      - key: FRONTEND_URLS
-        value: https://jkhoa.github.io
-      - key: JWT_SECRET
-        generateValue: true
-      - key: JWT_REFRESH_SECRET
-        generateValue: true
-      - key: JWT_EXPIRES_IN
-        value: 15m
-      - key: JWT_REFRESH_EXPIRES_IN
-        value: 7d
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
