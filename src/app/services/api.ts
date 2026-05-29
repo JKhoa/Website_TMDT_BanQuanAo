@@ -35,7 +35,7 @@ class ApiService {
   async getProduct(...args: any[]): Promise<any> {
     const p = localProducts.find(p => p.id === args[0]);
     if (!p) throw new Error("Sản phẩm không tồn tại");
-    return p;
+    return { product: p };
   }
 
   // Categories
