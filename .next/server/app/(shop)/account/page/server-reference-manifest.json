@@ -1,0 +1,65 @@
+{
+  "node": {
+    "78b9f0a6ae68c81e67cc2ea1ecba52a4dc0cebd9a5": {
+      "workers": {
+        "app/(shop)/account/page": {
+          "moduleId": 90298,
+          "async": false,
+          "exportedName": "addToCartAction",
+          "filename": "src/app/actions/cart.ts"
+        }
+      },
+      "exportedName": "addToCartAction",
+      "filename": "src/app/actions/cart.ts"
+    },
+    "40d494bc746e7a7c6b9dd5d2b5eb42ff2684b1194b": {
+      "workers": {
+        "app/(shop)/account/page": {
+          "moduleId": 90298,
+          "async": false,
+          "exportedName": "removeFromCartAction",
+          "filename": "src/app/actions/cart.ts"
+        }
+      },
+      "exportedName": "removeFromCartAction",
+      "filename": "src/app/actions/cart.ts"
+    },
+    "609ee5cc460416639846fb8b0417066bda47c59b13": {
+      "workers": {
+        "app/(shop)/account/page": {
+          "moduleId": 90298,
+          "async": false,
+          "exportedName": "updateCartItemQuantityAction",
+          "filename": "src/app/actions/cart.ts"
+        }
+      },
+      "exportedName": "updateCartItemQuantityAction",
+      "filename": "src/app/actions/cart.ts"
+    },
+    "00578c1c1e133670464028c0a94f94a5e00ad67842": {
+      "workers": {
+        "app/(shop)/account/page": {
+          "moduleId": 90298,
+          "async": false,
+          "exportedName": "clearCartAction",
+          "filename": "src/app/actions/cart.ts"
+        }
+      },
+      "exportedName": "clearCartAction",
+      "filename": "src/app/actions/cart.ts"
+    },
+    "400560d38a3c01385c47467c52eb0886bc80f6eae6": {
+      "workers": {
+        "app/(shop)/account/page": {
+          "moduleId": 90298,
+          "async": false,
+          "exportedName": "uploadImageAction",
+          "filename": "src/app/actions/upload.ts"
+        }
+      },
+      "exportedName": "uploadImageAction",
+      "filename": "src/app/actions/upload.ts"
+    }
+  },
+  "edge": {}
+}

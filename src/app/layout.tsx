@@ -1,3 +1,4 @@
+import Providers from './Providers';
 import '../styles/index.css';
 import '../styles/tailwind.css';
 import '../styles/theme.css';
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
