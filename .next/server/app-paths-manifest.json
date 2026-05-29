@@ -14,6 +14,8 @@
   "/(shop)/lookbook/page": "app/(shop)/lookbook/page.js",
   "/(shop)/order-success/page": "app/(shop)/order-success/page.js",
   "/(shop)/page": "app/(shop)/page.js",
+  "/(shop)/policy/[type]/page": "app/(shop)/policy/[type]/page.js",
+  "/(shop)/product/[id]/page": "app/(shop)/product/[id]/page.js",
   "/(shop)/products/page": "app/(shop)/products/page.js",
   "/(shop)/search/page": "app/(shop)/search/page.js",
   "/(shop)/wishlist/page": "app/(shop)/wishlist/page.js",
@@ -22,6 +24,5 @@
   "/admin/customers/page": "app/admin/customers/page.js",
   "/admin/orders/page": "app/admin/orders/page.js",
   "/admin/page": "app/admin/page.js",
-  "/admin/products/page": "app/admin/products/page.js",
-  "/page": "app/page.js"
+  "/admin/products/page": "app/admin/products/page.js"
 }
