@@ -17,7 +17,7 @@ const sidebarItems = [
 ];
 
 export default function AdminLayout({children}) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const navigate = router.push;
   const pathname = usePathname();
@@ -27,10 +27,18 @@ export default function AdminLayout({children}) {
 
   // Guard: redirect non-admin users
   useEffect(() => {
-    if (!user || !isAdminUser) {
+    if (!loading && (!user || !isAdminUser)) {
       navigate("/login");
     }
-  }, [user, isAdminUser, navigate]);
+  }, [user, isAdminUser, navigate, loading]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   if (!user || !isAdminUser) return null;
 

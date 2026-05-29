@@ -10,9 +10,17 @@ export function AccountPage({ children }: { children: React.ReactNode }) {
   const location = { pathname };
   const router = useRouter();
   const navigate = router.push;
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   const isAdminUser = user?.role === "admin" || user?.isAdmin === true || user?.email === "admin@fashionshop.vn";
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   if (!user) {
     navigate("/login");
